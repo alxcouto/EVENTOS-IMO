@@ -1,0 +1,23 @@
+{
+  "name": "eventos-imo",
+  "version": "1.0.0",
+  "description": "Plataforma de eventos y emisiones en directo IMO Grupo Miranza",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "imo",
+    "miranza",
+    "live-speech",
+    "web-client",
+    "subtitles",
+    "realtime"
+  ],
+  "author": "IMO Grupo Miranza",
+  "license": "UNLICENSED"
+}

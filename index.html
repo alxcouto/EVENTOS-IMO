@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVENTOS IMO | Plataforma de Emisiones en Directo</title>
+    <meta name="description" content="Plataforma de emisiones científicas y quirúrgicas en directo de IMO Grupo Miranza con subtitulado y traducción en tiempo real.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Bar with Miranza Clinical Palette -->
+    <header class="top-nav">
+        <div class="nav-container">
+            <div class="brand-group">
+                <a href="/" class="brand-link" title="EVENTOS IMO">
+                    <span class="brand-badge">IMO</span>
+                    <span class="brand-title">EVENTOS-IMO</span>
+                </a>
+                <span class="brand-divider">|</span>
+                <span class="brand-subtext">Grupo Miranza</span>
+            </div>
+            <div class="nav-actions">
+                <span class="live-indicator">
+                    <span class="pulse-dot"></span>
+                    <span>1 EMISIÓN ACTIVA</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Header -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <div class="hero-badge">CENTRO DE EXCELENCIA OFTALMOLÓGICA</div>
+            <h1 class="hero-title">Emisiones Clínicas y Quirúrgicas en Directo</h1>
+            <p class="hero-subtitle">
+                Plataforma oficial de retransmisión para congresos, simposios y jornadas formativas de IMO Grupo Miranza, equipada con subtitulado asistido por IA y traducción multilingüe en tiempo real.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content: Event Grid -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Eventos y Retransmisiones</h2>
+                    <p class="section-caption">Seleccione una emisión para acceder al reproductor interactivo.</p>
+                </div>
+                <div class="filter-pills">
+                    <button class="pill active" type="button">Todos</button>
+                    <button class="pill" type="button">En Directo</button>
+                    <button class="pill" type="button">Próximos</button>
+                </div>
+            </div>
+
+            <div class="events-grid">
+                <!-- Active Event: Be-Light -->
+                <article class="event-card active-event">
+                    <div class="card-status-bar">
+                        <span class="status-chip live">
+                            <span class="pulse-dot red"></span>
+                            <span>EN DIRECTO</span>
+                        </span>
+                        <span class="event-date">30 Septiembre 2026</span>
+                    </div>
+
+                    <div class="card-body">
+                        <h3 class="event-title">Be-Light 2026</h3>
+                        <p class="event-desc">
+                            Jornada quirúrgica y de actualización clínica oftalmológica retransmitida con subtitulación automática en español e inglés y síntesis de voz sincronizada.
+                        </p>
+
+                        <div class="session-selector-box">
+                            <span class="session-box-label">Sesiones Disponibles:</span>
+                            <div class="session-buttons">
+                                <a href="/26-09-30_BeLight/?session=session_1" class="btn-session active" title="Acceder a Sesión 1">
+                                    <span class="session-num">1</span>
+                                    <span class="session-info">
+                                        <strong>Sesión 1</strong>
+                                        <small>Broadcast: JVe72x6qjfo</small>
+                                    </span>
+                                    <span class="session-arrow">→</span>
+                                </a>
+
+                                <a href="/26-09-30_BeLight/?session=session_2" class="btn-session" title="Acceder a Sesión 2">
+                                    <span class="session-num">2</span>
+                                    <span class="session-info">
+                                        <strong>Sesión 2</strong>
+                                        <small>Broadcast: XZ6oYuFedCk</small>
+                                    </span>
+                                    <span class="session-arrow">→</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card-features">
+                            <span class="feature-tag">📺 YouTube Live</span>
+                            <span class="feature-tag">⚡ Supabase Realtime</span>
+                            <span class="feature-tag">💬 Subtítulos ES / EN</span>
+                            <span class="feature-tag">📊 Matomo Analytics</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="/26-09-30_BeLight/?session=session_1" class="btn-primary">
+                            <span>Acceder al Reproductor</span>
+                            <span class="icon">↗</span>
+                        </a>
+                        <button class="btn-secondary" type="button" onclick="toggleEmbedCode('embed-26-09-30_BeLight')">
+                            <span>Código Embed</span>
+                        </button>
+                    </div>
+
+                    <!-- Collapsible Embed Code Drawer -->
+                    <div id="embed-26-09-30_BeLight" class="embed-drawer hidden">
+                        <p class="embed-instruction">Incruste este reproductor en cualquier web con el script oficial:</p>
+                        <pre class="embed-code-block"><code>&lt;div class="livespeech-embed" data-session="session_1"&gt;&lt;/div&gt;
+&lt;script src="https://&lt;TU-DOMINIO-RAILWAY&gt;/26-09-30_BeLight/embed.js" async&gt;&lt;/script&gt;</code></pre>
+                    </div>
+                </article>
+
+                <!-- Future Placeholder Event -->
+                <article class="event-card upcoming-event">
+                    <div class="card-status-bar">
+                        <span class="status-chip upcoming">
+                            <span>🗓️ PRÓXIMAMENTE</span>
+                        </span>
+                        <span class="event-date">Octubre 2026</span>
+                    </div>
+
+                    <div class="card-body">
+                        <h3 class="event-title">Simposio Cirugía de Retina & Vítreo</h3>
+                        <p class="event-desc">
+                            Próxima sesión científica multidisciplinar de IMO Grupo Miranza con retransmisión de casos quirúrgicos de alta complejidad en directo.
+                        </p>
+
+                        <div class="placeholder-notice">
+                            <span class="notice-icon">ℹ️</span>
+                            <span>La programación horaria y los IDs de retransmisión se publicarán en los próximos días.</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button class="btn-disabled" disabled>
+                            <span>Emisión No Iniciada</span>
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <span class="footer-brand">IMO Grupo Miranza</span>
+                <span class="footer-copy">© 2026 Instituto de Microcirugía Ocular. Todos los derechos reservados.</span>
+            </div>
+            <div class="footer-right">
+                <a href="https://miranza.es" target="_blank" rel="noopener" class="footer-link">Portal Miranza ↗</a>
+                <a href="https://imo.es" target="_blank" rel="noopener" class="footer-link">Clínica IMO ↗</a>
+                <span class="footer-tag">LiveSpeech MLX Platform</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive script for UI toggles -->
+    <script>
+        function toggleEmbedCode(drawerId) {
+            const drawer = document.getElementById(drawerId);
+            if (drawer) {
+                drawer.classList.toggle('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
