@@ -139,52 +139,52 @@ EVENTOS-IMO/
 ## Phase 2: Be-Light Event Integration & Verification
 *Focus: Verify that the Be-Light event client loads credentials properly, synchronizes subtitles in real-time, and operates cleanly via direct access and embedding.*
 
-- [ ] **Task 2.1: Configuration Resolution & Multi-Session Mappings**
+- [x] **Task 2.1: Configuration Resolution & Multi-Session Mappings**
   - **Objective**: Verify that the client resolves Supabase credentials and YouTube IDs for both sessions.
   - **Details**:
-    - [ ] Validate `config.json` contents against project requirements [refer to ./26-09-30_BeLight/config.json].
-    - [ ] Verify multi-path candidate loader finds `config.json` via relative resolution paths [refer to ./26-09-30_BeLight/Client/script.js].
-    - [ ] Verify `session_1` resolves to YouTube ID `JVe72x6qjfo`.
-    - [ ] Verify `session_2` resolves to YouTube ID `XZ6oYuFedCk`.
-    - [ ] Verify Supabase endpoint `https://kcdhrxtbylpaceeoglpq.supabase.co` and anonymous key are initialized.
+    - [x] Validate `config.json` contents against project requirements [refer to ./26-09-30_BeLight/config.json].
+    - [x] Verify multi-path candidate loader finds `config.json` via relative resolution paths [refer to ./26-09-30_BeLight/Client/script.js].
+    - [x] Verify `session_1` resolves to YouTube ID `JVe72x6qjfo`.
+    - [x] Verify `session_2` resolves to YouTube ID `XZ6oYuFedCk`.
+    - [x] Verify Supabase endpoint `https://kcdhrxtbylpaceeoglpq.supabase.co` and anonymous key are initialized.
   - **Verification**:
     - Launch the client with `?session=session_1`. Open browser developer console and confirm log output confirms `Active Session: session_1 -> YouTube ID: JVe72x6qjfo` and Supabase initialization success.
     - Repeat with `?session=session_2`. Confirm YouTube ID resolves to `XZ6oYuFedCk`.
 
-- [ ] **Task 2.2: YouTube Player & Subtitle Realtime Streaming**
+- [x] **Task 2.2: YouTube Player & Subtitle Realtime Streaming**
   - **Objective**: Confirm video playback, custom HTML5 controls, and Supabase live captions.
   - **Details**:
-    - [ ] Test video loading, poster fallback, and central unmute overlay functionality [refer to ./26-09-30_BeLight/Client/index.html].
-    - [ ] Verify custom controls bar: Play/Pause, Mute/Volume slider, Fullscreen, and LIVE status badge.
-    - [ ] Verify Supabase Realtime channel subscription to the `captions` table.
-    - [ ] Verify 2-line subtitle display box formatting, language toggle (Spanish/English), and TTS speech synthesis toggle.
+    - [x] Test video loading, poster fallback, and central unmute overlay functionality [refer to ./26-09-30_BeLight/Client/index.html].
+    - [x] Verify custom controls bar: Play/Pause, Mute/Volume slider, Fullscreen, and LIVE status badge.
+    - [x] Verify Supabase Realtime channel subscription to the `captions` table.
+    - [x] Verify 2-line subtitle display box formatting, language toggle (Spanish/English), and TTS speech synthesis toggle.
   - **Verification**:
     - Play the video. Confirm video playback starts, audio unmute overlay functions on click, and subtitles render with high contrast.
 
-- [ ] **Task 2.3: Embed Helper Script & Host Telemetry Bridge**
+- [x] **Task 2.3: Embed Helper Script & Host Telemetry Bridge**
   - **Objective**: Validate third-party embedding via `embed.js` and Matomo analytics bridging.
   - **Details**:
-    - [ ] Verify `.livespeech-embed` container discovery and responsive iframe creation [refer to ./26-09-30_BeLight/embed.js].
-    - [ ] Verify postMessage telemetry forwarding from the player iframe to host `window._paq` and `Matomo.MediaAnalytics`.
-    - [ ] Validate MutationObserver behavior for dynamically injected embed containers.
+    - [x] Verify `.livespeech-embed` container discovery and responsive iframe creation [refer to ./26-09-30_BeLight/embed.js].
+    - [x] Verify postMessage telemetry forwarding from the player iframe to host `window._paq` and `Matomo.MediaAnalytics`.
+    - [x] Validate MutationObserver behavior for dynamically injected embed containers.
   - **Verification**:
     - Create a test host page with a `.livespeech-embed` container referencing the server's `embed.js`.
     - Confirm the iframe is created with correct session parameters and analytics events are emitted via postMessage.
 
 > [!NOTE]
-> **Phase 2 Approval Gate**: Stop and review client functionality with the user before preparing cloud hosting and Git repository.
+> **Phase 2 Approval Gate**: Completed and verified.
 
 ---
 
 ## Phase 3: GitHub Repository & Railway Cloud Deployment
 *Focus: Set up the GitHub repository, connect Railway for automated deployment, and verify production endpoints.*
 
-- [ ] **Task 3.1: Git Repository Structure & Local Version Control**
+- [x] **Task 3.1: Git Repository Structure & Local Version Control**
   - **Objective**: Initialize and configure the Git repository for EVENTOS-IMO.
   - **Details**:
-    - [ ] Create `.gitignore` to exclude OS files (`.DS_Store`), temporary artifacts, and node modules while ensuring all project code and documentation are tracked.
-    - [ ] Initialize Git repository in the project folder [refer to ./01-idea.md].
-    - [ ] Verify file status and create clean initial commit.
+    - [x] Create `.gitignore` to exclude OS files (`.DS_Store`), temporary artifacts, and node modules while ensuring all project code and documentation are tracked.
+    - [x] Initialize Git repository in the project folder [refer to ./01-idea.md].
+    - [x] Verify file status and create clean initial commit.
     - [ ] Link local repository to remote GitHub repository named `EVENTOS-IMO`.
   - **Verification**:
     - Run `git status`. Verify working tree is clean and only desired files are staged.
