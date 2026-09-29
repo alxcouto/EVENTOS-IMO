@@ -185,10 +185,10 @@ EVENTOS-IMO/
     - [x] Create `.gitignore` to exclude OS files (`.DS_Store`), temporary artifacts, and node modules while ensuring all project code and documentation are tracked.
     - [x] Initialize Git repository in the project folder [refer to ./01-idea.md].
     - [x] Verify file status and create clean initial commit.
-    - [ ] Link local repository to remote GitHub repository named `EVENTOS-IMO`.
+    - [x] Link local repository to remote GitHub repository named `EVENTOS-IMO`.
   - **Verification**:
     - Run `git status`. Verify working tree is clean and only desired files are staged.
-    - Verify remote origin URL points to `https://github.com/<user>/EVENTOS-IMO.git`.
+    - Verify remote origin URL points to `https://github.com/alxcouto/EVENTOS-IMO.git`.
 
 - [ ] **Task 3.2: Railway Project Setup & Continuous Deployment**
   - **Objective**: Provision a new Railway project and connect it to the GitHub repository.
