@@ -121,27 +121,46 @@ const server = http.createServer((req, res) => {
                 return;
             }
 
-            // INTERNAL REWRITE: Check if directory contains Client/index.html (e.g. /26-09-30_BeLight/)
-            const clientIndex = path.join(targetFullPath, 'Client', 'index.html');
-            if (fs.existsSync(clientIndex)) {
-                return serveFile(res, clientIndex, `Internal Rewrite (${safePath} -> Client/index.html)`);
-            }
-
-            // Fallback: Check if directory contains a direct index.html
+            // 1. Direct index.html in directory (e.g. /26-09-30_BeLight/index.html -> Event Sub-Landing, or /26-09-30_BeLight/player/index.html -> Player)
             const directIndex = path.join(targetFullPath, 'index.html');
             if (fs.existsSync(directIndex)) {
                 return serveFile(res, directIndex, `Directory Index (${safePath})`);
             }
+
+            // 2. Rewrite: player/index.html
+            const playerIndex = path.join(targetFullPath, 'player', 'index.html');
+            if (fs.existsSync(playerIndex)) {
+                return serveFile(res, playerIndex, `Player Rewrite (${safePath} -> player/index.html)`);
+            }
+
+            // 3. Rewrite: Client/index.html (backward compatibility)
+            const clientIndex = path.join(targetFullPath, 'Client', 'index.html');
+            if (fs.existsSync(clientIndex)) {
+                return serveFile(res, clientIndex, `Client Rewrite (${safePath} -> Client/index.html)`);
+            }
         }
 
-        // C. Sub-asset Resolution for Event Folders (Internal Rewrite Support)
-        // If browser was rewritten to /26-09-30_BeLight/ and requests relative "style.css" or "script.js",
-        // safePath is "26-09-30_BeLight/style.css". Check if it exists under "26-09-30_BeLight/Client/style.css".
+        // C. Sub-asset Resolution for Event Folders
         const pathSegments = safePath.split('/');
         if (pathSegments.length >= 2) {
             const eventDir = pathSegments[0]; // e.g. "26-09-30_BeLight"
-            const subResource = pathSegments.slice(1).join('/'); // e.g. "style.css", "script.js"
+            const subResource = pathSegments.slice(1).join('/'); // e.g. "player/config.json", "style.css"
 
+            // If player/Client requests config.json and it lives at event root:
+            if (subResource === 'player/config.json' || subResource === 'Client/config.json') {
+                const eventConfigPath = path.join(ROOT_DIR, eventDir, 'config.json');
+                if (fs.existsSync(eventConfigPath) && fs.statSync(eventConfigPath).isFile()) {
+                    return serveFile(res, eventConfigPath, `Event Config Fallback (${safePath} -> ${eventDir}/config.json)`);
+                }
+            }
+
+            // Check under player/
+            const playerAssetPath = path.join(ROOT_DIR, eventDir, 'player', subResource);
+            if (fs.existsSync(playerAssetPath) && fs.statSync(playerAssetPath).isFile()) {
+                return serveFile(res, playerAssetPath, `Player Sub-Asset Rewrite (${safePath} -> ${eventDir}/player/${subResource})`);
+            }
+
+            // Check under Client/
             const clientAssetPath = path.join(ROOT_DIR, eventDir, 'Client', subResource);
             if (fs.existsSync(clientAssetPath) && fs.statSync(clientAssetPath).isFile()) {
                 return serveFile(res, clientAssetPath, `Client Sub-Asset Rewrite (${safePath} -> ${eventDir}/Client/${subResource})`);

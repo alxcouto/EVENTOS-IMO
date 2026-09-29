@@ -1,0 +1,293 @@
+/* ==============================================================================
+   Be-Light 2026 Event Sub-Landing Page Styles
+   Inherits base Miranza tokens from /style.css
+   ============================================================================== */
+
+.event-hero-section {
+    background: linear-gradient(135deg, var(--navy-primary) 0%, #001B3D 60%, #004D77 100%);
+    color: var(--text-on-navy);
+    padding: 40px 0 50px 0;
+    border-bottom: 3px solid var(--green-miranza);
+}
+
+.breadcrumb-trail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+}
+
+.breadcrumb-trail a {
+    color: var(--green-miranza);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.breadcrumb-trail a:hover {
+    text-decoration: underline;
+}
+
+.bc-sep {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.bc-current {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.event-hero-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+}
+
+.event-hero-date {
+    font-size: 1.05rem;
+    color: var(--green-miranza);
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.event-hero-desc {
+    max-width: 800px;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.nav-back-link {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.08);
+    transition: var(--transition-standard);
+}
+
+.nav-back-link:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #FFFFFF;
+}
+
+/* Sessions Landing Grid */
+.sessions-landing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.session-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: var(--transition-standard);
+}
+
+.session-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--blue-accent);
+}
+
+.session-card-header {
+    background: #F8FAFC;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.session-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.session-index {
+    font-weight: 700;
+    color: var(--navy-primary);
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+}
+
+.session-status-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--red-live);
+    letter-spacing: 0.05em;
+}
+
+.broadcast-tag {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: #EDF2F7;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.session-card-body {
+    padding: 24px 20px;
+    flex: 1;
+}
+
+.session-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--navy-primary);
+    margin-bottom: 10px;
+}
+
+.session-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 20px;
+}
+
+.session-features-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pill-feat {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--blue-accent);
+    background: var(--blue-soft);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+}
+
+.session-card-footer {
+    padding: 18px 20px;
+    background: #FAFCFD;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-play-session {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: var(--blue-accent);
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 13px 20px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.98rem;
+    transition: var(--transition-standard);
+    box-shadow: 0 2px 6px rgba(0, 102, 157, 0.2);
+}
+
+.btn-play-session:hover {
+    background: var(--blue-hover);
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 102, 157, 0.3);
+}
+
+.btn-play-icon {
+    font-size: 0.9rem;
+}
+
+.btn-arrow {
+    transition: transform 0.2s ease;
+}
+
+.btn-play-session:hover .btn-arrow {
+    transform: translateX(4px);
+}
+
+/* Embed Box */
+.embed-resources-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.embed-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.embed-box-title {
+    font-size: 1.15rem;
+    color: var(--navy-primary);
+    margin-bottom: 4px;
+}
+
+.embed-box-caption {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.btn-toggle-embed {
+    background: #EDF2F7;
+    border: 1px solid var(--border-color);
+    color: var(--navy-primary);
+    padding: 9px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-standard);
+}
+
+.btn-toggle-embed:hover {
+    background: #E2E8F0;
+}
+
+.embed-details-panel {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.embed-details-panel.hidden {
+    display: none;
+}
+
+.embed-snippet-group {
+    margin-bottom: 16px;
+}
+
+.embed-snippet-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.embed-snippet-group pre {
+    background: #001B3D;
+    color: #73cf91;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-family: monospace;
+    font-size: 0.82rem;
+    overflow-x: auto;
+}
