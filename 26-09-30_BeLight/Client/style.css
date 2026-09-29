@@ -1,8 +1,8 @@
 /* ==============================================================================
    LiveSpeech MLX TX - Embedded Web Client Stylesheet
-   Strict Dark & Light Themes, Zero-Scroll Flex Layout, Glassmorphism Cards,
-   Uppercase Subtitle Box, Option B Player Controls & Dynamic AI Disclaimer.
-   Enforces YouTube Player's 16:9 proportions with controls and captions no wider than YouTube Player.
+   Strict Dark & Light Themes, Dynamic Viewport Scaling, Zero-Scroll Flex Layout,
+   Glassmorphism Cards, Option B Player Controls & Dynamic AI Disclaimer.
+   Enforces lockstep 16:9 width alignment: navbar, video, controls, and subtitles share exact same width.
    ============================================================================== */
 
 /* --- Theme Tokens --- */
@@ -19,17 +19,24 @@
     --badge-original-bg: #3b82f6;
     --badge-translated-bg: #8b5cf6;
     --subtitle-bg: rgba(11, 17, 32, 0.96);
-    --subtitle-border: rgba(56, 189, 248, 0.35);
+    --subtitle-border: rgba(56, 189, 248, 0.4);
     --shadow-color: rgba(0, 0, 0, 0.45);
-    --control-bg: rgba(15, 23, 42, 0.85);
+    --control-bg: rgba(15, 23, 42, 0.88);
     --disclaimer-bg: rgba(255, 255, 255, 0.05);
     --disclaimer-border: rgba(255, 255, 255, 0.1);
     --disclaimer-text: #94a3b8;
+
+    /* Dynamic Viewport Overhead:
+       Navbar (30px) + Video Controls (30px) + Subtitle Controls (30px) + Subtitle Box (50px)
+       + 4 gaps (4 * 5px = 20px) + Container padding (4px + 4px = 8px) + safety headroom (16px) = 184px
+    */
+    --chrome-overhead: 184px;
+    --stage-width: min(calc(100vw - 16px), calc((100dvh - var(--chrome-overhead)) * (16 / 9)));
 }
 
 :root[data-theme="light"] {
     --bg-color: #f8fafc;
-    --card-bg: rgba(255, 255, 255, 0.92);
+    --card-bg: rgba(255, 255, 255, 0.94);
     --card-border: rgba(0, 0, 0, 0.1);
     --text-primary: #0f172a;
     --text-secondary: #334155;
@@ -39,13 +46,16 @@
     --badge-live-bg: #dc2626;
     --badge-original-bg: #2563eb;
     --badge-translated-bg: #7c3aed;
-    --subtitle-bg: rgba(248, 250, 252, 0.96);
-    --subtitle-border: rgba(2, 132, 199, 0.35);
+    --subtitle-bg: rgba(248, 250, 252, 0.98);
+    --subtitle-border: rgba(2, 132, 199, 0.4);
     --shadow-color: rgba(0, 0, 0, 0.08);
-    --control-bg: rgba(241, 245, 249, 0.9);
+    --control-bg: rgba(241, 245, 249, 0.92);
     --disclaimer-bg: rgba(0, 0, 0, 0.04);
     --disclaimer-border: rgba(0, 0, 0, 0.08);
     --disclaimer-text: #64748b;
+
+    --chrome-overhead: 184px;
+    --stage-width: min(calc(100vw - 16px), calc((100dvh - var(--chrome-overhead)) * (16 / 9)));
 }
 
 /* --- Global Reset & Base Layout --- */
@@ -59,10 +69,11 @@ html, body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-primary);
-    line-height: 1.4;
+    line-height: 1.35;
     overflow: hidden;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     margin: 0;
     padding: 0;
 }
@@ -74,30 +85,150 @@ html, body {
     justify-content: center;
     width: 100%;
     height: 100vh;
-    max-height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     margin: 0 auto;
-    padding: 8px;
+    padding: 4px 8px;
     box-sizing: border-box;
     overflow: hidden;
 }
 
+/* Unified Stage Container: All elements scale in lockstep with the 16:9 video */
 .main-content {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 5px;
     width: 100%;
-    /* Strict 16:9 alignment: controls & subtitles never exceed the 16:9 player width */
-    max-width: min(100%, calc((100vh - 210px) * (16 / 9)));
+    max-width: var(--stage-width);
     margin: 0 auto;
     box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 .hidden {
     display: none !important;
 }
 
-/* --- 1. YouTube Player Section --- */
+/* ==============================================================================
+   1. Player Navigation Header (Slim & Proportioned)
+   ============================================================================== */
+.player-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 8px;
+    height: 28px;
+    min-height: 28px;
+    background: var(--control-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    margin: 0;
+    flex-shrink: 0;
+    backdrop-filter: blur(8px);
+    box-sizing: border-box;
+}
+
+.player-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-player-back {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 0.74rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-player-back:hover {
+    background: rgba(56, 189, 248, 0.15);
+}
+
+.player-nav-divider {
+    color: var(--text-muted);
+    opacity: 0.4;
+    font-size: 0.72rem;
+}
+
+.player-nav-title {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.player-nav-center {
+    display: flex;
+    align-items: center;
+}
+
+.session-nav-pills {
+    display: flex;
+    gap: 3px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px;
+    border-radius: 14px;
+}
+
+.session-pill {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.session-pill:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.session-pill.active {
+    background: var(--accent-color);
+    color: #0b1120;
+}
+
+.player-nav-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Light / Dark Mode Toggle Button */
+.btn-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--card-border);
+    color: var(--text-primary);
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.btn-theme-toggle:hover {
+    background: var(--accent-color);
+    color: #0b1120;
+    border-color: var(--accent-color);
+}
+
+/* ==============================================================================
+   2. YouTube Player Section
+   ============================================================================== */
 .player-section {
     width: 100%;
     flex: 0 0 auto;
@@ -105,7 +236,7 @@ html, body {
     flex-direction: column;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 16px var(--shadow-color);
     backdrop-filter: blur(12px);
@@ -138,7 +269,7 @@ html, body {
     border: 0;
 }
 
-/* Option B Pointer Event Shields - Full surface shield prevents native YouTube CC and UI activation */
+/* Option B Pointer Event Shields */
 .yt-shield-full {
     position: absolute;
     top: 0;
@@ -156,7 +287,7 @@ html, body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 60px;
+    height: 50px;
     z-index: 11;
     background: transparent;
     pointer-events: auto;
@@ -166,8 +297,8 @@ html, body {
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 160px;
-    height: 60px;
+    width: 140px;
+    height: 50px;
     z-index: 11;
     background: transparent;
     pointer-events: auto;
@@ -222,109 +353,87 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    padding: 20px;
+    gap: 10px;
+    padding: 16px;
     text-align: center;
 }
 
 .poster-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: rgba(0, 0, 0, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.70rem;
     font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #f8fafc;
-    backdrop-filter: blur(8px);
+    letter-spacing: 0.5px;
+    color: #fff;
 }
 
 .pulse-dot {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: #ef4444;
-    box-shadow: 0 0 8px #ef4444;
-    animation: pulseGlow 1.5s infinite;
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
 }
 
-@keyframes pulseGlow {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(1.2); }
+.pulse-dot.red {
+    background: var(--badge-live-bg);
+    box-shadow: 0 0 8px var(--badge-live-bg);
 }
 
 .btn-poster-action {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 26px;
-    border-radius: 50px;
-    background: linear-gradient(135deg, #0284c7, #38bdf8);
-    color: #fff;
+    gap: 8px;
+    background: var(--accent-color);
+    color: #0b1120;
     border: none;
-    font-size: 0.95rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    padding: 10px 20px;
+    border-radius: 24px;
+    font-size: 0.82rem;
+    font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.4);
+    transition: all 0.2s ease;
 }
 
 .btn-poster-action:hover {
-    transform: scale(1.06);
-    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.6);
+    transform: scale(1.04);
+    background: #7dd3fc;
 }
 
 .poster-error-notice {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: rgba(15, 23, 42, 0.9);
     border: 1px solid rgba(239, 68, 68, 0.4);
-    padding: 10px 16px;
+    padding: 10px 14px;
     border-radius: 8px;
-    max-width: 90%;
-    color: #f8fafc;
-    font-size: 0.78rem;
-    backdrop-filter: blur(8px);
+    font-size: 0.74rem;
+    color: #fca5a5;
+    max-width: 320px;
 }
 
 .btn-yt-external {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 6px;
-    background: #ef4444;
-    color: #fff;
-    font-size: 0.76rem;
-    font-weight: 700;
-    text-decoration: none;
-    transition: background 0.2s ease;
+    color: #38bdf8;
+    text-decoration: underline;
+    font-weight: 600;
 }
 
-.btn-yt-external:hover {
-    background: #dc2626;
-}
-
-/* Option C Central Unmute Overlay (Instagram/TikTok style) */
+/* Option C Central Unmute Overlay */
 .unmute-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 25;
-    background: rgba(0, 0, 0, 0.35);
-    cursor: pointer;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 15;
+    pointer-events: auto;
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
@@ -335,92 +444,69 @@ html, body {
 }
 
 .btn-unmute-overlay {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 26px;
-    border-radius: 50px;
-    background: rgba(15, 23, 42, 0.90);
-    color: #38bdf8;
-    border: 2px solid rgba(56, 189, 248, 0.7);
-    font-size: 0.95rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 700;
     cursor: pointer;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.3);
-    animation: pulseUnmute 2s infinite ease-in-out;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     transition: transform 0.2s ease, background 0.2s ease;
 }
 
-:root[data-theme="light"] .btn-unmute-overlay {
-    background: rgba(255, 255, 255, 0.95);
-    color: #0284c7;
-    border: 2px solid rgba(2, 132, 199, 0.7);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 0 20px rgba(2, 132, 199, 0.25);
-}
-
-@keyframes pulseUnmute {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-}
-
 .btn-unmute-overlay:hover {
-    transform: scale(1.08) !important;
-    background: #38bdf8;
-    color: #0b1120;
-}
-
-:root[data-theme="light"] .btn-unmute-overlay:hover {
-    background: #0284c7;
-    color: #ffffff;
-}
-
-.unmute-icon {
-    font-size: 1.25rem;
+    transform: scale(1.05);
+    background: rgba(15, 23, 42, 0.95);
 }
 
 /* Custom HTML5 Video Player Controls Bar */
 .custom-player-controls {
-    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 12px;
+    padding: 2px 8px;
+    height: 28px;
+    min-height: 28px;
     background: var(--control-bg);
     border-top: 1px solid var(--card-border);
-    gap: 8px;
+    font-size: 0.74rem;
+    flex-shrink: 0;
+    box-sizing: border-box;
 }
 
 .ctrl-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .btn-ctrl {
     background: rgba(255, 255, 255, 0.08);
     color: var(--text-primary);
     border: 1px solid var(--card-border);
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 0.78rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 0.68rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .btn-ctrl:hover {
     background: var(--accent-color);
-    color: #fff;
+    color: #0b1120;
+    border-color: var(--accent-color);
 }
 
 .ctrl-slider {
-    width: 75px;
+    width: 60px;
+    height: 4px;
     accent-color: var(--accent-color);
     cursor: pointer;
 }
@@ -428,183 +514,149 @@ html, body {
 .badge-live {
     background: var(--badge-live-bg);
     color: #fff;
-    font-size: 0.72rem;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.65rem;
     font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 12px;
-    text-transform: uppercase;
 }
 
 .time-display {
-    font-family: monospace;
-    font-size: 0.82rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    font-size: 0.70rem;
     color: var(--text-muted);
 }
 
-/* --- 2. Subtitle Controls & Status Section --- */
+/* ==============================================================================
+   3. Subtitle Controls Section
+   ============================================================================== */
 .controls-section {
-    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 7px 12px;
-    background: var(--card-bg);
+    gap: 6px;
+    padding: 2px 8px;
+    height: 28px;
+    min-height: 28px;
+    background: var(--control-bg);
     border: 1px solid var(--card-border);
-    border-radius: 8px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 2px 8px var(--shadow-color);
-    gap: 10px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    box-sizing: border-box;
 }
 
 .control-buttons-group {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 6px;
     flex: 1;
-    min-width: 0;
+    overflow: hidden;
 }
 
 .btn-mode, .btn-tts {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 11px;
-    border-radius: 6px;
-    border: 1px solid var(--card-border);
-    background: rgba(255, 255, 255, 0.05);
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-primary);
+    border: 1px solid var(--card-border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.68rem;
     font-weight: 600;
-    font-size: 0.78rem;
     cursor: pointer;
-    transition: all 0.2s ease;
     white-space: nowrap;
-}
-
-.btn-mode.active {
-    background: var(--accent-color);
-    color: #fff;
-    border-color: var(--accent-hover);
-    box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
-}
-
-.btn-tts.active {
-    background: #10b981;
-    color: #fff;
-    border-color: #059669;
-    box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
-}
-
-/* Dynamic AI Subtitle Disclaimer */
-.ai-disclaimer {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.74rem;
-    color: var(--disclaimer-text);
-    font-style: italic;
-    line-height: 1.25;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: var(--disclaimer-bg);
-    border: 1px solid var(--disclaimer-border);
-    user-select: none;
     transition: all 0.2s ease;
 }
 
-.ai-disclaimer .warning-icon {
-    font-style: normal;
-    font-size: 0.78rem;
+.btn-mode.active, .btn-tts.active {
+    background: var(--accent-color);
+    color: #0b1120;
+    border-color: var(--accent-color);
+}
+
+.ai-disclaimer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    color: var(--disclaimer-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.85;
 }
 
 .language-status-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-shrink: 0;
 }
 
 .language-selector-wrapper {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    font-size: 0.68rem;
 }
 
 .language-selector-wrapper label {
-    font-size: 0.76rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    white-space: nowrap;
+    display: none;
 }
 
 .language-dropdown {
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: var(--bg-color);
+    background: var(--card-bg);
     color: var(--text-primary);
     border: 1px solid var(--card-border);
-    font-size: 0.78rem;
-    font-weight: 600;
-    outline: none;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 0.68rem;
+    font-weight: 500;
     cursor: pointer;
 }
 
 .status-indicator-wrapper {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
 }
 
 .info-tag {
-    font-size: 0.70rem;
+    font-size: 0.64rem;
     font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
-    text-transform: uppercase;
-}
-
-.badge-original {
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #fff;
     background: var(--badge-original-bg);
-    color: #fff;
-}
-
-.badge-translated {
-    background: var(--badge-translated-bg);
-    color: #fff;
 }
 
 .waiting-tag {
-    font-size: 0.70rem;
+    font-size: 0.64rem;
     color: var(--text-muted);
-    font-style: italic;
 }
 
-/* --- 3. Subtitle Display Box (Clean 2-line display) --- */
+/* ==============================================================================
+   4. Subtitle Display Box (Clean 2-line display)
+   ============================================================================== */
 .subtitle-section {
     width: 100%;
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 .subtitle-box {
-    width: 100%;
-    box-sizing: border-box;
-    background: var(--subtitle-bg);
-    border: 1px solid var(--subtitle-border);
-    border-radius: 10px;
-    box-shadow: 0 4px 14px var(--shadow-color);
-    padding: 10px 18px;
-    height: 92px;
-    min-height: 92px;
-    max-height: 92px;
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    padding: 2px 10px;
+    background: var(--subtitle-bg);
+    border: 1.5px solid var(--subtitle-border);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    box-sizing: border-box;
     overflow: hidden;
-    backdrop-filter: blur(16px);
 }
 
 .subtitle-text-wrapper {
@@ -617,240 +669,17 @@ html, body {
 }
 
 .subtitle-text {
-    width: 100%;
+    font-size: clamp(0.78rem, 1.25vw, 0.98rem);
+    font-weight: 700;
+    line-height: 1.22;
     text-align: center;
-    font-size: 1.45rem;
-    font-weight: 800;
+    letter-spacing: 0.02em;
     color: var(--text-primary);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    line-height: 1.25;
     display: -webkit-box;
-    line-clamp: 2;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     word-break: break-word;
-}
-
-/* --- Fullscreen Enhancements --- */
-:fullscreen,
-:-webkit-full-screen,
-.app-container.is-fullscreen {
-    background-color: #050508 !important;
-    padding: 12px !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: hidden !important;
-}
-
-:fullscreen .main-content,
-:-webkit-full-screen .main-content,
-.app-container.is-fullscreen .main-content {
-    width: 100% !important;
-    max-width: min(calc(100vw - 32px), calc((100vh - 190px) * (16 / 9))) !important;
-    height: auto !important;
-    max-height: 100vh !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    margin: auto !important;
-}
-
-:fullscreen .player-section,
-:-webkit-full-screen .player-section,
-.app-container.is-fullscreen .player-section {
-    width: 100% !important;
-    flex: 0 0 auto !important;
-    border-radius: 10px !important;
-}
-
-:fullscreen .player-wrapper,
-:-webkit-full-screen .player-wrapper,
-.app-container.is-fullscreen .player-wrapper {
-    width: 100% !important;
-    aspect-ratio: 16 / 9 !important;
-    position: relative !important;
-    overflow: hidden !important;
-}
-
-:fullscreen .controls-section,
-:-webkit-full-screen .controls-section,
-.app-container.is-fullscreen .controls-section {
-    width: 100% !important;
-    flex: 0 0 auto !important;
-}
-
-:fullscreen .subtitle-section,
-:-webkit-full-screen .subtitle-section,
-.app-container.is-fullscreen .subtitle-section {
-    width: 100% !important;
-    flex: 0 0 auto !important;
-}
-
-:fullscreen .subtitle-box,
-:-webkit-full-screen .subtitle-box,
-.app-container.is-fullscreen .subtitle-box {
-    width: 100% !important;
-    height: 96px !important;
-    min-height: 96px !important;
-    border-radius: 10px !important;
-}
-
-:fullscreen .subtitle-text,
-:-webkit-full-screen .subtitle-text,
-.app-container.is-fullscreen .subtitle-text {
-    font-size: 1.65rem !important;
-}
-
-/* --- Responsive Adaptations --- */
-@media (max-width: 640px) {
-    .controls-section {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 6px;
-        padding: 8px 10px;
-    }
-
-    .control-buttons-group {
-        justify-content: space-between;
-    }
-
-    .ai-disclaimer {
-        width: 100%;
-        text-align: center;
-        justify-content: center;
-        font-size: 0.70rem;
-        margin-top: 2px;
-        order: 3;
-    }
-
-    .language-status-group {
-        justify-content: space-between;
-        width: 100%;
-    }
-
-    .subtitle-box {
-        height: 78px;
-        min-height: 78px;
-        padding: 6px 10px;
-    }
-
-    .subtitle-text {
-        font-size: 1.15rem;
-    }
-
-    .custom-player-controls {
-        padding: 4px 8px;
-    }
-
-    .ctrl-slider {
-        width: 55px;
-    }
-}
-
-/* ==============================================================================
-   Player Navigation Header
-   ============================================================================== */
-.player-nav-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 16px;
-    background: var(--control-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    margin-bottom: 12px;
-    backdrop-filter: blur(8px);
-}
-
-.player-nav-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.btn-player-back {
-    color: var(--accent-color);
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-.btn-player-back:hover {
-    background: rgba(56, 189, 248, 0.15);
-}
-
-.player-nav-divider {
-    color: var(--text-muted);
-    opacity: 0.5;
-}
-
-.player-nav-title {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-}
-
-.player-nav-center {
-    display: flex;
-    align-items: center;
-}
-
-.session-nav-pills {
-    display: flex;
-    gap: 6px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 3px;
-    border-radius: 20px;
-}
-
-.session-pill {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 16px;
-    transition: all 0.2s ease;
-}
-
-.session-pill:hover {
-    color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.session-pill.active {
-    background: var(--accent-color);
-    color: #0b1120;
-}
-
-.player-nav-right {
-    display: flex;
-    align-items: center;
-}
-
-.live-indicator-sm {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--badge-live-bg);
-    letter-spacing: 0.05em;
 }

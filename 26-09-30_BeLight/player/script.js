@@ -17,10 +17,14 @@
     const urlParams = new URLSearchParams(window.location.search);
 
     const sessionParam = urlParams.get('session') || urlParams.get('broadcast_id') || urlParams.get('v') || urlParams.get('id') || 'session_1';
-    const themeParam = (urlParams.get('theme') || 'dark').toLowerCase() === 'light' ? 'light' : 'dark';
+    
+    // Theme preference: URL param > localStorage > default dark
+    const storedTheme = localStorage.getItem('livespeech_theme');
+    const urlTheme = urlParams.get('theme');
+    const effectiveTheme = urlTheme ? (urlTheme.toLowerCase() === 'light' ? 'light' : 'dark') : (storedTheme || 'dark');
 
     // Strictly enforce theme via data-theme attribute
-    document.documentElement.setAttribute('data-theme', themeParam);
+    document.documentElement.setAttribute('data-theme', effectiveTheme);
 
     // Highlight active session pill in navigation bar if present
     const activePill = document.getElementById(`pill-${sessionParam}`);
@@ -932,10 +936,50 @@
     }
 
     // ==============================================================================
-    // 11. Startup Initialization
+    // 11. Light / Dark Theme Toggle Setup
+    // ==============================================================================
+    function setupThemeToggle() {
+        const btnTheme = document.getElementById('btn-theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+
+        function updateThemeUI(currentTheme) {
+            if (!btnTheme) return;
+            if (currentTheme === 'dark') {
+                if (themeIcon) themeIcon.textContent = '☀️';
+                if (themeText) themeText.textContent = 'CLARO';
+                btnTheme.title = 'Cambiar a Modo Claro';
+            } else {
+                if (themeIcon) themeIcon.textContent = '🌙';
+                if (themeText) themeText.textContent = 'OSCURO';
+                btnTheme.title = 'Cambiar a Modo Oscuro';
+            }
+        }
+
+        const activeTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        updateThemeUI(activeTheme);
+
+        if (btnTheme) {
+            btnTheme.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme') || 'dark';
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('livespeech_theme', next);
+                updateThemeUI(next);
+                emitAnalytics('theme_toggle', {
+                    ...getPlayerSnapshot(),
+                    theme: next
+                });
+            });
+        }
+    }
+
+    // ==============================================================================
+    // 12. Startup Initialization
     // ==============================================================================
     updatePoster(resolvedBroadcastId);
     updateAiDisclaimer(selectedLanguage);
+    setupThemeToggle();
     loadConfig();
 
 })();

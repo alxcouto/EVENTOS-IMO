@@ -10,32 +10,32 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Player Navigation Header -->
-        <header class="player-nav-bar">
-            <div class="player-nav-left">
-                <a href="/26-09-30_BeLight/" class="btn-player-back" title="Volver a Be-Light 2026">
-                    <span class="back-arrow">←</span>
-                    <span>Be-Light 2026</span>
-                </a>
-                <span class="player-nav-divider">|</span>
-                <span class="player-nav-title">IMO Grupo Miranza</span>
-            </div>
-            <div class="player-nav-center">
-                <div class="session-nav-pills" id="player-session-pills">
-                    <a href="?session=session_1" class="session-pill" id="pill-session_1">Sesión 1</a>
-                    <a href="?session=session_2" class="session-pill" id="pill-session_2">Sesión 2</a>
-                </div>
-            </div>
-            <div class="player-nav-right">
-                <span class="live-indicator-sm">
-                    <span class="pulse-dot red"></span>
-                    <span>EN DIRECTO</span>
-                </span>
-            </div>
-        </header>
-
-        <!-- Main Video & Subtitle Section -->
+        <!-- Main Video & Subtitle Section (Unified Stage Container) -->
         <main class="main-content">
+            <!-- Player Navigation Header (Scaled in lockstep with player) -->
+            <header class="player-nav-bar">
+                <div class="player-nav-left">
+                    <a href="/26-09-30_BeLight/" class="btn-player-back" title="Volver a Be-Light 2026">
+                        <span class="back-arrow">←</span>
+                        <span>Be-Light 2026</span>
+                    </a>
+                    <span class="player-nav-divider">|</span>
+                    <span class="player-nav-title">IMO Grupo Miranza</span>
+                </div>
+                <div class="player-nav-center">
+                    <div class="session-nav-pills" id="player-session-pills">
+                        <a href="?session=session_1" class="session-pill" id="pill-session_1">Sesión 1</a>
+                        <a href="?session=session_2" class="session-pill" id="pill-session_2">Sesión 2</a>
+                    </div>
+                </div>
+                <div class="player-nav-right">
+                    <button id="btn-theme-toggle" class="btn-theme-toggle" type="button" title="Alternar modo claro / oscuro" aria-label="Cambiar tema">
+                        <span class="theme-icon" id="theme-icon">☀️</span>
+                        <span class="theme-text" id="theme-text">CLARO</span>
+                    </button>
+                </div>
+            </header>
+
             <!-- 1. YouTube Player Area with Option B Custom Controls & Shields -->
             <section class="player-section">
                 <div class="player-wrapper" id="player-wrapper">
@@ -118,7 +118,7 @@
                     <!-- Dynamic AI Subtitle Disclaimer (Swaps EN/ES dynamically) -->
                     <span id="ai-disclaimer" class="ai-disclaimer" title="AI Subtitles Notice">
                         <span class="warning-icon">⚠️</span>
-                        <span id="ai-disclaimer-text">Los subtítulos generados por IA pueden contener imprecisiones o discordancias</span>
+                        <span id="ai-disclaimer-text">Los subtítulos generados por IA pueden contener imprecisiones</span>
                     </span>
                 </div>
 

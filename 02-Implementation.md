@@ -164,6 +164,17 @@ EVENTOS-IMO/
   - **Verification**:
     - Verify player navigation bar displays and active pill reflects the current query parameter.
 
+- [x] **Task 2.4: Viewport Scaling Recalculation & Light/Dark Theme Switcher**
+  - **Objective**: Prevent vertical cutoff on widescreen/fullscreen displays and add interactive theme switching.
+  - **Details**:
+    - [x] Re-calculate dynamic CSS stage width formula (`--stage-width`) accounting for all non-video chrome height (`~184px`).
+    - [x] Lock navbar, video player, video controls, subtitle controls, and subtitle box to the exact same responsive width.
+    - [x] Slim down navigation bar to `28px` with compact typography and pill buttons.
+    - [x] Replace static "EN DIRECTO" badge with interactive Light / Dark Mode switcher button (`☀️ / 🌙`) with `localStorage` persistence.
+    - [x] Enforce `flex-shrink: 0` on all fixed-height UI elements to prevent distortion on wide aspect ratios.
+  - **Verification**:
+    - Test fullscreen and standard 16:9 viewport. Verify 100% of navbar, video, controls, and subtitle box are visible with zero cutoff and zero scrollbars.
+
 > [!NOTE]
 > **Phase 2 Approval Gate**: Completed and verified.
 
