@@ -60,6 +60,13 @@
     let selectedLanguage = 'Spanish';
     let ttsEnabled = false;
 
+    // Stream Mode & Timeline Scrubber State
+    let isLiveMode = false;
+    let isLiveDvr = false;
+    let isUserScrubbing = false;
+    let liveSeekableRange = { start: 0, end: 0 };
+    let currentDuration = 0;
+
     // Timecode Subtitle Sync Engine & In-Memory Buffer
     let inMemoryCaptions = []; // Array of all session captions sorted by start_seconds
     let latestCaptionRecord = null;
@@ -173,6 +180,9 @@
     const badgeLiveStatus = document.getElementById('badge-live-status');
     const displayPlayerTime = document.getElementById('display-player-time');
     const btnCustomFs = document.getElementById('btn-custom-fs');
+    const timelineContainer = document.getElementById('timeline-container');
+    const inputCustomSeek = document.getElementById('input-custom-seek');
+    const seekFill = document.getElementById('seek-fill');
 
     const btnToggleSubtitles = document.getElementById('btn-toggle-subtitles');
     const subtitlesStateText = document.getElementById('subtitles-state-text');
@@ -538,6 +548,58 @@
         });
     }
 
+    // Timeline Seek Slider (Subtle Scrubber)
+    if (inputCustomSeek) {
+        inputCustomSeek.addEventListener('input', (e) => {
+            isUserScrubbing = true;
+            const val = parseFloat(e.target.value);
+            const min = parseFloat(e.target.min) || 0;
+            const max = parseFloat(e.target.max) || 100;
+            const pct = max > min ? Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100)) : 0;
+            if (seekFill) seekFill.style.width = `${pct}%`;
+
+            if (displayPlayerTime) {
+                if (isLiveMode && isLiveDvr) {
+                    const behind = Math.max(0, liveSeekableRange.end - val);
+                    displayPlayerTime.textContent = behind > 5 ? `-${formatTime(behind)}` : formatTime(val);
+                } else {
+                    displayPlayerTime.textContent = `${formatTime(val)} / ${formatTime(currentDuration)}`;
+                }
+            }
+        });
+
+        inputCustomSeek.addEventListener('change', (e) => {
+            const targetSeconds = parseFloat(e.target.value);
+            if (player && typeof player.seekTo === 'function') {
+                player.seekTo(targetSeconds, true);
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            emitAnalytics('seek', { ...getPlayerSnapshot(), seek_to: targetSeconds });
+
+            setTimeout(() => {
+                isUserScrubbing = false;
+            }, 150);
+        });
+    }
+
+    // Interactive Live Jump Button
+    if (badgeLiveStatus) {
+        badgeLiveStatus.addEventListener('click', () => {
+            if (isLiveMode && isLiveDvr && badgeLiveStatus.classList.contains('interactive')) {
+                const targetLive = liveSeekableRange.end || currentDuration;
+                if (player && typeof player.seekTo === 'function' && targetLive > 0) {
+                    player.seekTo(targetLive, true);
+                }
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                }
+                emitAnalytics('seek', { ...getPlayerSnapshot(), seek_to: targetLive, jump_live: true });
+            }
+        });
+    }
+
     // Fullscreen Toggle Handler
     if (btnCustomFs) {
         btnCustomFs.addEventListener('click', () => {
@@ -635,7 +697,8 @@
                 .from('captions')
                 .select('*')
                 .eq('broadcast_id', resolvedBroadcastId)
-                .order('start_seconds', { ascending: true });
+                .order('start_seconds', { ascending: true })
+                .range(0, 9999);
 
             if (error) {
                 console.warn('[Historic Captions Error]:', error);
@@ -692,9 +755,97 @@
             return;
         }
 
-        // Update player time display
-        if (displayPlayerTime) {
-            displayPlayerTime.textContent = formatTime(currentTime);
+        currentDuration = duration;
+
+        // Detect seekable range and stream type
+        try {
+            if (typeof player.getSeekableRange === 'function') {
+                const seekable = player.getSeekableRange();
+                if (seekable && typeof seekable.start === 'number' && typeof seekable.end === 'number') {
+                    liveSeekableRange = seekable;
+                    if ((seekable.end - seekable.start) > 30) {
+                        isLiveDvr = true;
+                    }
+                }
+            }
+        } catch (e) {}
+
+        try {
+            if (typeof player.getVideoData === 'function') {
+                const vData = player.getVideoData();
+                if (vData && typeof vData.isLive === 'boolean') {
+                    isLiveMode = vData.isLive;
+                }
+            }
+        } catch (e) {}
+
+        if (!isLiveMode && duration === 0 && currentTime > 0) {
+            isLiveMode = true;
+        }
+
+        // UI Updates for Timeline & Time Display (only if not actively dragging)
+        if (!isUserScrubbing) {
+            if (isLiveMode) {
+                if (isLiveDvr && liveSeekableRange.end > liveSeekableRange.start) {
+                    if (timelineContainer) timelineContainer.classList.remove('hidden');
+                    if (inputCustomSeek) {
+                        inputCustomSeek.min = liveSeekableRange.start;
+                        inputCustomSeek.max = liveSeekableRange.end;
+                        inputCustomSeek.value = currentTime;
+                    }
+                    const liveRange = liveSeekableRange.end - liveSeekableRange.start;
+                    const livePct = liveRange > 0 ? Math.max(0, Math.min(100, ((currentTime - liveSeekableRange.start) / liveRange) * 100)) : 100;
+                    if (seekFill) seekFill.style.width = `${livePct}%`;
+
+                    const behindSeconds = Math.max(0, liveSeekableRange.end - currentTime);
+                    if (behindSeconds > 10) {
+                        if (badgeLiveStatus) {
+                            badgeLiveStatus.classList.remove('hidden');
+                            badgeLiveStatus.classList.add('interactive', 'is-behind');
+                            badgeLiveStatus.textContent = `⚪ LIVE (-${formatTime(behindSeconds)})`;
+                            badgeLiveStatus.title = 'Haga clic para volver al directo';
+                        }
+                    } else {
+                        if (badgeLiveStatus) {
+                            badgeLiveStatus.classList.remove('hidden', 'is-behind', 'interactive');
+                            badgeLiveStatus.textContent = '🔴 LIVE';
+                            badgeLiveStatus.title = 'Emisión en directo';
+                        }
+                    }
+                    if (displayPlayerTime) {
+                        displayPlayerTime.textContent = formatTime(currentTime);
+                    }
+                } else {
+                    // Live without DVR: hide scrubber, show LIVE badge
+                    if (timelineContainer) timelineContainer.classList.add('hidden');
+                    if (badgeLiveStatus) {
+                        badgeLiveStatus.classList.remove('hidden', 'is-behind', 'interactive');
+                        badgeLiveStatus.textContent = '🔴 LIVE';
+                    }
+                    if (displayPlayerTime) {
+                        displayPlayerTime.textContent = formatTime(currentTime);
+                    }
+                }
+            } else {
+                // VOD Mode
+                if (timelineContainer && duration > 0) {
+                    timelineContainer.classList.remove('hidden');
+                }
+                if (inputCustomSeek) {
+                    inputCustomSeek.min = 0;
+                    inputCustomSeek.max = duration > 0 ? duration : 100;
+                    inputCustomSeek.value = currentTime;
+                }
+                const vodPct = duration > 0 ? Math.max(0, Math.min(100, (currentTime / duration) * 100)) : 0;
+                if (seekFill) seekFill.style.width = `${vodPct}%`;
+
+                if (badgeLiveStatus) {
+                    badgeLiveStatus.classList.add('hidden');
+                }
+                if (displayPlayerTime) {
+                    displayPlayerTime.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+                }
+            }
         }
 
         const snapshot = getPlayerSnapshot();
@@ -726,7 +877,7 @@
             return;
         }
 
-        // Find active caption matching currentTime: start_seconds <= currentTime <= end_seconds + 0.5s tolerance
+        // Find active caption matching currentTime: start_seconds <= currentTime <= end_seconds + 1.2s tolerance
         let matchedRecord = null;
         for (let i = inMemoryCaptions.length - 1; i >= 0; i--) {
             const cap = inMemoryCaptions[i];
@@ -739,11 +890,14 @@
             }
         }
 
-        // Fallback to latest record if live streaming near edge
-        if (!matchedRecord && latestCaptionRecord) {
-            const latestEnd = Number(latestCaptionRecord.end_seconds || latestCaptionRecord.start_seconds || 0) + 4.0;
-            if (currentTime >= latestEnd - 5.0 && currentTime <= latestEnd) {
-                matchedRecord = latestCaptionRecord;
+        // Fallback to latest record ONLY if live streaming near live edge (within 5 seconds)
+        if (!matchedRecord && latestCaptionRecord && isLiveMode) {
+            const edge = liveSeekableRange.end || currentTime;
+            if (Math.abs(currentTime - edge) <= 5.0) {
+                const latestEnd = Number(latestCaptionRecord.end_seconds || latestCaptionRecord.start_seconds || 0) + 4.0;
+                if (currentTime >= latestEnd - 5.0 && currentTime <= latestEnd) {
+                    matchedRecord = latestCaptionRecord;
+                }
             }
         }
 
@@ -770,8 +924,8 @@
                 infoTag.className = `info-tag ${isOriginal ? 'badge-original' : 'badge-translated'}`;
             }
 
-            // Web Speech Synthesis (TTS)
-            if (ttsEnabled && resolvedText) {
+            // Web Speech Synthesis (TTS) - suppressed while scrubbing
+            if (ttsEnabled && resolvedText && !isUserScrubbing) {
                 speakText(resolvedText, selectedLanguage);
             }
         }

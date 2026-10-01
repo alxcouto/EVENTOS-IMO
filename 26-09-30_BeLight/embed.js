@@ -86,10 +86,11 @@
             unmute: 'Unmute',
             volume_change: 'Volume Change',
             fullscreen_enter: 'Fullscreen Enter',
-            fullscreen_exit: 'Fullscreen Exit'
+            fullscreen_exit: 'Fullscreen Exit',
+            seek: 'Seek'
         };
         if (controlActions[data.action]) {
-            const value = data.action === 'volume_change' ? Math.round(numberOrZero(data.volume)) : position;
+            const value = data.action === 'volume_change' ? Math.round(numberOrZero(data.volume)) : (data.action === 'seek' ? Math.round(numberOrZero(data.seek_to || data.progress)) : position);
             paq.push(['trackEvent', 'LiveSpeech Controls', controlActions[data.action], contentName, value]);
         }
     }
@@ -157,6 +158,8 @@
             tracker.update();
         } else if (data.action === 'fullscreen_exit') {
             tracker.setFullscreen(false);
+            tracker.update();
+        } else if (data.action === 'seek') {
             tracker.update();
         }
     }

@@ -200,16 +200,16 @@ EVENTOS-IMO/
   - **Verification**:
     - User confirmed initial deployment is browsable.
 
-- [ ] **Task 3.3: Production Environment Verification & Health Check**
+- [x] **Task 3.3: Production Environment Verification & Health Check**
   - **Objective**: Perform end-to-end verification of the deployed 3-tier platform on Railway.
   - **Details**:
-    - [ ] Push updated 3-tier architecture and race-condition fix to GitHub `main`.
-    - [ ] Verify automatic Railway redeployment succeeds without errors.
-    - [ ] Navigate to the Railway production URL root (`/`).
-    - [ ] Click "Acceder al Evento" -> verify Be-Light sub-landing loads (`/26-09-30_BeLight/`).
-    - [ ] Click "Sesión 1" -> verify player loads Be-Light Session 1 (`JVe72x6qjfo`) and NOT ARI2026.
-    - [ ] Click "Sesión 2" -> verify player loads Be-Light Session 2 (`XZ6oYuFedCk`).
-    - [ ] Verify "← Volver a Be-Light 2026" returns to the sub-landing.
+    - [x] Push updated 3-tier architecture and race-condition fix to GitHub `main`.
+    - [x] Verify automatic Railway redeployment succeeds without errors.
+    - [x] Navigate to the Railway production URL root (`/`).
+    - [x] Click "Acceder al Evento" -> verify Be-Light sub-landing loads (`/26-09-30_BeLight/`).
+    - [x] Click "Sesión 1" -> verify player loads Be-Light Session 1 (`JVe72x6qjfo`) and NOT ARI2026.
+    - [x] Click "Sesión 2" -> verify player loads Be-Light Session 2 (`XZ6oYuFedCk`).
+    - [x] Verify "← Volver a Be-Light 2026" returns to the sub-landing.
   - **Verification**:
     - Perform live browser test on Railway domain. Confirm all 3 tiers navigate smoothly and playback is correct.
 
