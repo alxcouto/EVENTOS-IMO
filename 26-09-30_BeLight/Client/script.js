@@ -779,56 +779,58 @@
             }
         } catch (e) {}
 
-        if (!isLiveMode && duration === 0 && currentTime > 0) {
+        // If duration is positive and fixed, it is playable as VOD (even if it was a recorded live broadcast)
+        if (duration > 0) {
+            isLiveMode = false;
+        } else if (!isLiveMode && duration === 0 && currentTime > 0) {
             isLiveMode = true;
         }
 
         // UI Updates for Timeline & Time Display (only if not actively dragging)
         if (!isUserScrubbing) {
-            if (isLiveMode) {
-                if (isLiveDvr && liveSeekableRange.end > liveSeekableRange.start) {
-                    if (timelineContainer) timelineContainer.classList.remove('hidden');
-                    if (inputCustomSeek) {
-                        inputCustomSeek.min = liveSeekableRange.start;
-                        inputCustomSeek.max = liveSeekableRange.end;
-                        inputCustomSeek.value = currentTime;
-                    }
-                    const liveRange = liveSeekableRange.end - liveSeekableRange.start;
-                    const livePct = liveRange > 0 ? Math.max(0, Math.min(100, ((currentTime - liveSeekableRange.start) / liveRange) * 100)) : 100;
-                    if (seekFill) seekFill.style.width = `${livePct}%`;
+            if (isLiveMode && !isLiveDvr) {
+                // Active Live without DVR: hide scrubber, show LIVE badge
+                if (timelineContainer) timelineContainer.classList.add('hidden');
+                if (badgeLiveStatus) {
+                    badgeLiveStatus.classList.remove('hidden', 'is-behind', 'interactive');
+                    badgeLiveStatus.textContent = '🔴 LIVE';
+                }
+                if (displayPlayerTime) {
+                    displayPlayerTime.textContent = formatTime(currentTime);
+                }
+            } else if (isLiveMode && isLiveDvr) {
+                // Live with DVR: show scrubber, allow rewinding
+                if (timelineContainer) timelineContainer.classList.remove('hidden');
+                if (inputCustomSeek) {
+                    inputCustomSeek.min = liveSeekableRange.start;
+                    inputCustomSeek.max = liveSeekableRange.end;
+                    inputCustomSeek.value = currentTime;
+                }
+                const liveRange = liveSeekableRange.end - liveSeekableRange.start;
+                const livePct = liveRange > 0 ? Math.max(0, Math.min(100, ((currentTime - liveSeekableRange.start) / liveRange) * 100)) : 100;
+                if (seekFill) seekFill.style.width = `${livePct}%`;
 
-                    const behindSeconds = Math.max(0, liveSeekableRange.end - currentTime);
-                    if (behindSeconds > 10) {
-                        if (badgeLiveStatus) {
-                            badgeLiveStatus.classList.remove('hidden');
-                            badgeLiveStatus.classList.add('interactive', 'is-behind');
-                            badgeLiveStatus.textContent = `⚪ LIVE (-${formatTime(behindSeconds)})`;
-                            badgeLiveStatus.title = 'Haga clic para volver al directo';
-                        }
-                    } else {
-                        if (badgeLiveStatus) {
-                            badgeLiveStatus.classList.remove('hidden', 'is-behind', 'interactive');
-                            badgeLiveStatus.textContent = '🔴 LIVE';
-                            badgeLiveStatus.title = 'Emisión en directo';
-                        }
-                    }
-                    if (displayPlayerTime) {
-                        displayPlayerTime.textContent = formatTime(currentTime);
+                const behindSeconds = Math.max(0, liveSeekableRange.end - currentTime);
+                if (behindSeconds > 10) {
+                    if (badgeLiveStatus) {
+                        badgeLiveStatus.classList.remove('hidden');
+                        badgeLiveStatus.classList.add('interactive', 'is-behind');
+                        badgeLiveStatus.textContent = `⚪ LIVE (-${formatTime(behindSeconds)})`;
+                        badgeLiveStatus.title = 'Haga clic para volver al directo';
                     }
                 } else {
-                    // Live without DVR: hide scrubber, show LIVE badge
-                    if (timelineContainer) timelineContainer.classList.add('hidden');
                     if (badgeLiveStatus) {
                         badgeLiveStatus.classList.remove('hidden', 'is-behind', 'interactive');
                         badgeLiveStatus.textContent = '🔴 LIVE';
-                    }
-                    if (displayPlayerTime) {
-                        displayPlayerTime.textContent = formatTime(currentTime);
+                        badgeLiveStatus.title = 'Emisión en directo';
                     }
                 }
+                if (displayPlayerTime) {
+                    displayPlayerTime.textContent = formatTime(currentTime);
+                }
             } else {
-                // VOD Mode
-                if (timelineContainer && duration > 0) {
+                // VOD Mode (Standard video or archived live stream)
+                if (timelineContainer) {
                     timelineContainer.classList.remove('hidden');
                 }
                 if (inputCustomSeek) {
@@ -843,7 +845,7 @@
                     badgeLiveStatus.classList.add('hidden');
                 }
                 if (displayPlayerTime) {
-                    displayPlayerTime.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+                    displayPlayerTime.textContent = duration > 0 ? `${formatTime(currentTime)} / ${formatTime(duration)}` : formatTime(currentTime);
                 }
             }
         }

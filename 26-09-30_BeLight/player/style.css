@@ -468,15 +468,87 @@ html, body {
 /* Custom HTML5 Video Player Controls Bar */
 .custom-player-controls {
     display: flex;
+    flex-direction: column;
+    padding: 0;
+    background: var(--control-bg);
+    border-top: 1px solid var(--card-border);
+    font-size: 0.74rem;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    position: relative;
+    user-select: none;
+}
+
+/* Subtle Hairline Timeline Scrubber */
+.timeline-container {
+    position: relative;
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    transition: height 0.15s ease;
+}
+
+:root[data-theme="light"] .timeline-container {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.timeline-container:hover {
+    height: 6px;
+}
+
+.timeline-container.hidden {
+    display: none !important;
+}
+
+.ctrl-seek-bar {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    width: 100%;
+    height: calc(100% + 8px);
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 5;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.seek-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: var(--accent-color);
+    pointer-events: none;
+    border-radius: 0 2px 2px 0;
+    transition: width 0.05s linear;
+}
+
+.timeline-container:hover .seek-fill::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+}
+
+.ctrl-row {
+    display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 2px 8px;
     height: 28px;
     min-height: 28px;
-    background: var(--control-bg);
-    border-top: 1px solid var(--card-border);
-    font-size: 0.74rem;
-    flex-shrink: 0;
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -518,6 +590,29 @@ html, body {
     border-radius: 3px;
     font-size: 0.65rem;
     font-weight: 700;
+    border: none;
+    cursor: default;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.badge-live.interactive {
+    cursor: pointer;
+}
+
+.badge-live.interactive:hover {
+    transform: scale(1.05);
+}
+
+.badge-live.is-behind {
+    background: rgba(255, 255, 255, 0.18);
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+}
+
+:root[data-theme="light"] .badge-live.is-behind {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--text-primary);
+    border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .time-display {

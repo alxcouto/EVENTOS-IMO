@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LiveSpeech MLX Live Player</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -82,25 +82,33 @@
 
                 <!-- Custom HTML5 Video Player Controls Bar -->
                 <div class="custom-player-controls" id="custom-player-controls">
-                    <div class="ctrl-group left">
-                        <button id="btn-custom-play" class="btn-ctrl" title="Play / Pause Video">
-                            ▶ PLAY
-                        </button>
-                        <button id="btn-custom-mute" class="btn-ctrl" title="Mute / Unmute Video">
-                            🔊 MUTE
-                        </button>
-                        <input type="range" id="input-custom-volume" min="0" max="100" value="100" class="ctrl-slider" title="Volume Slider">
+                    <!-- Subtle Timeline Scrubber Track (3px hairline, non-intrusive) -->
+                    <div class="timeline-container" id="timeline-container" title="Control de tiempo">
+                        <input type="range" id="input-custom-seek" class="ctrl-seek-bar" min="0" max="100" value="0" step="0.1" title="Time scrubber" aria-label="Control de tiempo">
+                        <div class="seek-fill" id="seek-fill"></div>
                     </div>
 
-                    <div class="ctrl-group center">
-                        <span id="badge-live-status" class="badge-live">🔴 LIVE</span>
-                        <span id="display-player-time" class="time-display">00:00</span>
-                    </div>
+                    <div class="ctrl-row">
+                        <div class="ctrl-group left">
+                            <button id="btn-custom-play" class="btn-ctrl" title="Play / Pause Video">
+                                ▶ PLAY
+                            </button>
+                            <button id="btn-custom-mute" class="btn-ctrl" title="Mute / Unmute Video">
+                                🔊 MUTE
+                            </button>
+                            <input type="range" id="input-custom-volume" min="0" max="100" value="100" class="ctrl-slider" title="Volume Slider">
+                        </div>
 
-                    <div class="ctrl-group right">
-                        <button id="btn-custom-fs" class="btn-ctrl" title="Toggle Fullscreen">
-                            ⛶
-                        </button>
+                        <div class="ctrl-group center">
+                            <button id="badge-live-status" class="badge-live" type="button" title="Live stream status">🔴 LIVE</button>
+                            <span id="display-player-time" class="time-display">00:00</span>
+                        </div>
+
+                        <div class="ctrl-group right">
+                            <button id="btn-custom-fs" class="btn-ctrl" title="Toggle Fullscreen">
+                                ⛶
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -151,7 +159,7 @@
     </div>
 
     <!-- Application Logic (loaded first to define onYouTubeIframeAPIReady callback) -->
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
     <!-- YouTube IFrame Player API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 </body>
