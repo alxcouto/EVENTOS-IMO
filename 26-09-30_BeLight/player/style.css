@@ -723,6 +723,17 @@ html, body {
     border-radius: 3px;
     color: #fff;
     background: var(--badge-original-bg);
+    transition: background 0.2s ease;
+}
+
+.badge-original {
+    background: var(--badge-original-bg);
+    color: #fff;
+}
+
+.badge-translated {
+    background: var(--badge-translated-bg);
+    color: #fff;
 }
 
 .waiting-tag {

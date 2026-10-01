@@ -71,6 +71,8 @@
     let inMemoryCaptions = []; // Array of all session captions sorted by start_seconds
     let latestCaptionRecord = null;
     let syncTickerTimer = null;
+    let detectedSourceLanguage = null;
+    let currentRenderedRecord = null;
 
     let availableLanguages = new Set(['Spanish', 'English']);
     let currentSessionCode = 'UNKNOWN';
@@ -709,7 +711,9 @@
                 inMemoryCaptions = data;
                 latestCaptionRecord = data[data.length - 1];
                 if (waitingTag) waitingTag.classList.add('hidden');
-                console.log(`[Historic Captions] Loaded ${data.length} captions.`);
+                detectSourceLanguageFromData(data);
+                updateLanguageBadge(currentRenderedRecord);
+                console.log(`[Historic Captions] Loaded ${data.length} captions. Source: ${detectedSourceLanguage || 'default'}`);
             }
         } catch (err) {
             console.error('[Dual-Fetch Exception]:', err);
@@ -730,6 +734,12 @@
         }
 
         latestCaptionRecord = inMemoryCaptions[inMemoryCaptions.length - 1];
+
+        const rowSource = getRecordSourceLanguage(newRow);
+        if (rowSource && rowSource !== detectedSourceLanguage) {
+            detectedSourceLanguage = rowSource;
+            updateLanguageBadge(currentRenderedRecord);
+        }
     }
 
     // ==============================================================================
@@ -909,6 +919,9 @@
     function renderCaptionRecord(record) {
         if (!subtitleText) return;
 
+        currentRenderedRecord = record || null;
+        updateLanguageBadge(currentRenderedRecord);
+
         if (!record) {
             subtitleText.textContent = '';
             return;
@@ -918,13 +931,6 @@
 
         if (subtitleText.textContent !== resolvedText) {
             subtitleText.textContent = resolvedText;
-
-            // Update badge (Original vs Translated)
-            const isOriginal = isOriginalLanguage(record, selectedLanguage);
-            if (infoTag) {
-                infoTag.textContent = isOriginal ? 'Original' : 'Translated';
-                infoTag.className = `info-tag ${isOriginal ? 'badge-original' : 'badge-translated'}`;
-            }
 
             // Web Speech Synthesis (TTS) - suppressed while scrubbing
             if (ttsEnabled && resolvedText && !isUserScrubbing) {
@@ -958,22 +964,72 @@
         return '';
     }
 
-    function isOriginalLanguage(record, targetLanguage) {
-        if (!record) return true;
+    function getRecordSourceLanguage(record) {
+        if (!record) return null;
 
-        if (record.source_language) {
-            return record.source_language.toLowerCase() === targetLanguage.toLowerCase();
+        if (record.source_language && typeof record.source_language === 'string') {
+            return record.source_language;
+        }
+        if (record.sourceLanguage && typeof record.sourceLanguage === 'string') {
+            return record.sourceLanguage;
         }
 
         if (record.captions && typeof record.captions === 'object') {
-            const entry = record.captions[targetLanguage];
-            if (entry && typeof entry === 'object' && entry.sourceLanguage === true) {
-                return true;
+            for (const [langKey, langObj] of Object.entries(record.captions)) {
+                if (langObj && typeof langObj === 'object' && langObj.sourceLanguage === true) {
+                    return langKey;
+                }
             }
         }
 
-        // By default Spanish is source language in ARI 2026
-        return targetLanguage.toLowerCase() === 'spanish';
+        return null;
+    }
+
+    function detectSourceLanguageFromData(records) {
+        if (!Array.isArray(records)) return;
+        for (let i = records.length - 1; i >= 0; i--) {
+            const src = getRecordSourceLanguage(records[i]);
+            if (src) {
+                detectedSourceLanguage = src;
+                return;
+            }
+        }
+    }
+
+    function isOriginalLanguage(record, targetLanguage) {
+        if (!targetLanguage) return true;
+        const target = targetLanguage.trim().toLowerCase();
+
+        // 1. Check specific record source first
+        const recordSource = getRecordSourceLanguage(record);
+        if (recordSource && typeof recordSource === 'string') {
+            return recordSource.trim().toLowerCase() === target;
+        }
+
+        // 2. Check if target language entry in record has explicit sourceLanguage boolean
+        if (record && record.captions && typeof record.captions === 'object') {
+            for (const [key, val] of Object.entries(record.captions)) {
+                if (key.trim().toLowerCase() === target && val && typeof val === 'object' && typeof val.sourceLanguage === 'boolean') {
+                    return val.sourceLanguage;
+                }
+            }
+        }
+
+        // 3. Fallback to session-level detected source language if known
+        if (detectedSourceLanguage && typeof detectedSourceLanguage === 'string') {
+            return detectedSourceLanguage.trim().toLowerCase() === target;
+        }
+
+        // 4. Default fallback: Spanish
+        return target === 'spanish';
+    }
+
+    function updateLanguageBadge(record) {
+        if (!infoTag) return;
+        const targetRecord = record !== undefined ? record : currentRenderedRecord;
+        const isOriginal = isOriginalLanguage(targetRecord, selectedLanguage);
+        infoTag.textContent = isOriginal ? 'Original' : 'Translated';
+        infoTag.className = `info-tag ${isOriginal ? 'badge-original' : 'badge-translated'}`;
     }
 
     // ==============================================================================
@@ -1055,6 +1111,9 @@
             // Update dynamic AI disclaimer
             updateAiDisclaimer(selectedLanguage);
 
+            // Immediately update the Original / Translated badge
+            updateLanguageBadge(currentRenderedRecord);
+
             // Force refresh of current displayed subtitle
             if (subtitleText) {
                 tickSubtitleSync();
@@ -1135,6 +1194,7 @@
     // ==============================================================================
     updatePoster(resolvedBroadcastId);
     updateAiDisclaimer(selectedLanguage);
+    updateLanguageBadge(null);
     setupThemeToggle();
     loadConfig();
 
