@@ -3,7 +3,8 @@
  * - Dynamic config.json Resolver for 21 ARI 2026 Event Sessions
  * - Option B HTML5 Player Controls & Zero-Collision CC Architecture
  * - 2-Line High-Contrast Subtitle Display Box
- * - Supabase Realtime & Historic Captions Dual-Fetch Engine
+ * - Supabase Realtime & Historic Captions Dual-Fetch Engine (broadcast_id based)
+ * - Nested JSON captions parser (record.captions[Language].text) & Multi-Format Fallback
  * - Background Matomo In-Memory Telemetry Bridge (postMessage)
  * - Dynamic AI Subtitle Disclaimer (Spanish & English)
  * - Hairline Timeline Scrubber with Live / VOD Dynamic Sync
@@ -38,7 +39,6 @@
     const activePill = document.getElementById(`pill-${sessionParam}`);
     if (activePill) {
         activePill.classList.add('active');
-        // Scroll active pill into view smoothly within the pill strip
         setTimeout(() => {
             activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }, 100);
@@ -117,14 +117,16 @@
     let lastPolledVodDuration = 0;
     let consecutiveDurationMatches = 0;
 
-    // Caption Repetition Prevention & Synchronized Scrolling
+    // Caption State
+    let inMemoryCaptions = []; // Array of all session captions sorted by start_seconds
+    let latestCaptionRecord = null;
+    let lastMatchedCaptionIndex = -1;
+    let currentRenderedRecord = null;
+    let detectedSourceLanguage = null;
+
     let lastEmittedText = '';
     let lastEmittedTimestamp = 0;
     const DEDUPLICATION_WINDOW_MS = 1500;
-
-    let inMemoryCaptions = []; // Array of all session captions sorted by start_seconds
-    let isCaptionSyncedWithVideo = true;
-    let lastMatchedCaptionIndex = -1;
 
     // DOM Element References
     const subtitleBox = document.getElementById('subtitle-box');
@@ -213,7 +215,6 @@
         });
     }
 
-    // Helper: Format seconds to MM:SS or HH:MM:SS
     function formatTime(totalSeconds) {
         if (isNaN(totalSeconds) || totalSeconds < 0) return '00:00';
         const hours = Math.floor(totalSeconds / 3600);
@@ -271,7 +272,9 @@
         }
 
         isConfigLoaded = true;
-        console.log(`[Config] Active Session: ${sessionParam} -> YouTube ID: ${resolvedBroadcastId}`);
+        console.log(`[Config] Active Session: ${sessionParam} -> YouTube Broadcast ID: ${resolvedBroadcastId}`);
+        console.log(`[Config] Supabase Project: ${SUPABASE_URL}`);
+        
         updatePoster(resolvedBroadcastId);
         initSupabase();
         tryInitYouTubePlayer();
@@ -337,39 +340,12 @@
         console.log('[YouTube API] Player ready.');
         initOptionBControls();
         startTimeTracker();
-        detectLiveStreamStatus();
-    }
-
-    function detectLiveStreamStatus() {
-        if (!player || typeof player.getDuration !== 'function') return;
-
-        const duration = player.getDuration();
-        const videoData = (typeof player.getVideoData === 'function') ? player.getVideoData() : {};
-        const isLivePlayback = (typeof player.isLivePlayback === 'function') ? player.isLivePlayback() : false;
-
-        if (duration === 0 || isLivePlayback || (videoData && videoData.isLive)) {
-            isLiveMode = true;
-            if (badgeLiveStatus) {
-                badgeLiveStatus.textContent = '🔴 LIVE';
-                badgeLiveStatus.classList.remove('is-behind');
-            }
-            console.log('[Player Mode] Detected: Live Stream emission.');
-        } else {
-            isLiveMode = false;
-            streamDuration = duration;
-            if (badgeLiveStatus) {
-                badgeLiveStatus.textContent = '▶ VOD';
-                badgeLiveStatus.classList.remove('is-behind');
-            }
-            console.log(`[Player Mode] Detected: Recorded VOD (Duration: ${duration}s).`);
-        }
     }
 
     function onPlayerStateChange(event) {
         if (event.data === YT.PlayerState.PLAYING) {
             hidePoster();
             updatePlayButtonState(true);
-            detectLiveStreamStatus();
 
             if (player.isMuted && player.isMuted()) {
                 showUnmuteOverlay();
@@ -541,6 +517,7 @@
                 if (!isLiveMode && streamDuration > 0) {
                     const seekTargetTime = (percent / 100) * streamDuration;
                     if (displayPlayerTime) displayPlayerTime.textContent = formatTime(seekTargetTime);
+                    syncCaptionsToVideoTime(seekTargetTime);
                 }
             });
 
@@ -580,7 +557,6 @@
                     player.seekTo(player.getDuration(), true);
                     badgeLiveStatus.textContent = '🔴 LIVE';
                     badgeLiveStatus.classList.remove('is-behind');
-                    isCaptionSyncedWithVideo = true;
                 }
             });
         }
@@ -593,13 +569,13 @@
             if (!player || typeof player.getCurrentTime !== 'function') return;
 
             const currentTime = player.getCurrentTime();
+            const currentDuration = player.getDuration();
 
-            // Detect and stabilize duration
-            if (!isLiveMode) {
-                const currentDuration = player.getDuration();
-
+            // Dynamic VOD vs Live detection
+            if (currentDuration > 0) {
+                isLiveMode = false;
                 if (!isVodDurationStable) {
-                    if (currentDuration > 0 && Math.abs(currentDuration - lastPolledVodDuration) < 0.5) {
+                    if (Math.abs(currentDuration - lastPolledVodDuration) < 0.5) {
                         consecutiveDurationMatches++;
                         if (consecutiveDurationMatches >= 3) {
                             isVodDurationStable = true;
@@ -611,6 +587,7 @@
                     }
                     lastPolledVodDuration = currentDuration;
                 }
+                streamDuration = currentDuration;
 
                 if (!isUserSeeking && streamDuration > 0) {
                     const percent = Math.min(100, Math.max(0, (currentTime / streamDuration) * 100));
@@ -620,8 +597,13 @@
                         displayPlayerTime.textContent = `${formatTime(currentTime)} / ${formatTime(streamDuration)}`;
                     }
                 }
-            } else {
-                // Live mode DVR tracking
+
+                if (badgeLiveStatus) {
+                    badgeLiveStatus.textContent = '▶ VOD';
+                    badgeLiveStatus.classList.remove('is-behind');
+                }
+            } else if (currentTime > 0) {
+                isLiveMode = true;
                 const liveDuration = player.getDuration();
                 if (!isUserSeeking && liveDuration > 0) {
                     const percent = Math.min(100, Math.max(0, (currentTime / liveDuration) * 100));
@@ -642,11 +624,10 @@
                 }
             }
 
-            // Sync captions in VOD mode
-            if (!isLiveMode && isCaptionSyncedWithVideo) {
-                syncCaptionsToVideoTime(currentTime);
-            }
-        }, 300);
+            // Sync captions on EVERY tick regardless of VOD or live mode
+            syncCaptionsToVideoTime(currentTime);
+
+        }, 250);
     }
 
     // ==============================================================================
@@ -666,41 +647,69 @@
     }
 
     async function fetchHistoricCaptions() {
-        if (!supabaseClient) return;
+        if (!supabaseClient || !resolvedBroadcastId) return;
 
         try {
-            console.log(`[Captions] Fetching historic captions for session: ${sessionParam}...`);
+            console.log(`[Captions] Fetching historic captions for broadcast_id: ${resolvedBroadcastId} (Session: ${sessionParam})...`);
+            
             const { data, error } = await supabaseClient
                 .from('captions')
                 .select('*')
-                .eq('session_key', sessionParam)
-                .order('start_seconds', { ascending: true });
+                .eq('broadcast_id', resolvedBroadcastId)
+                .order('start_seconds', { ascending: true })
+                .range(0, 9999);
 
             if (error) {
-                console.warn('[Captions] Error fetching historic captions:', error.message);
+                console.warn('[Captions Error]:', error.message);
+                if (waitingTag) waitingTag.textContent = 'Error al cargar subtítulos';
                 return;
             }
 
             if (data && data.length > 0) {
-                console.log(`[Captions] Loaded ${data.length} historic captions.`);
+                console.log(`[Captions] Successfully loaded ${data.length} captions for broadcast_id: ${resolvedBroadcastId}.`);
                 inMemoryCaptions = data;
+                latestCaptionRecord = data[data.length - 1];
                 if (waitingTag) waitingTag.classList.add('hidden');
 
-                if (isLiveMode || inMemoryCaptions.length > 0) {
-                    const latest = inMemoryCaptions[inMemoryCaptions.length - 1];
-                    renderCaption(latest);
+                detectSourceLanguageFromData(data);
+
+                // Initial display
+                if (player && typeof player.getCurrentTime === 'function' && player.getCurrentTime() > 0) {
+                    syncCaptionsToVideoTime(player.getCurrentTime());
+                } else {
+                    const firstRecord = data[0];
+                    const firstInfo = extractCaptionInfo(firstRecord, selectedLanguage);
+                    if (firstInfo.text && subtitleTextEl) {
+                        subtitleTextEl.textContent = firstInfo.text;
+                        updateOriginalTranslatedBadge(firstInfo.isOriginal);
+                    }
+                }
+            } else {
+                console.log(`[Captions] No existing captions found in database for broadcast_id: ${resolvedBroadcastId}`);
+                if (waitingTag) {
+                    waitingTag.textContent = 'Sin subtítulos previos';
+                    waitingTag.classList.remove('hidden');
+                }
+                if (subtitleTextEl) {
+                    subtitleTextEl.textContent = 'ESPERANDO SUBTÍTULOS EN DIRECTO...';
                 }
             }
         } catch (err) {
-            console.error('[Captions] Exception loading captions:', err);
+            console.error('[Captions Exception]:', err);
         }
     }
 
     function subscribeToRealtimeCaptions() {
-        if (!supabaseClient) return;
+        if (!supabaseClient || !resolvedBroadcastId) return;
 
-        const channelName = `captions_realtime_${sessionParam}`;
-        console.log(`[Supabase Realtime] Subscribing to channel: ${channelName}`);
+        if (realtimeChannel) {
+            try {
+                supabaseClient.removeChannel(realtimeChannel);
+            } catch (e) {}
+        }
+
+        const channelName = `public:captions:${resolvedBroadcastId}`;
+        console.log(`[Supabase Realtime] Subscribing to channel: ${channelName} (filter: broadcast_id=eq.${resolvedBroadcastId})`);
 
         realtimeChannel = supabaseClient
             .channel(channelName)
@@ -710,16 +719,30 @@
                     event: 'INSERT',
                     schema: 'public',
                     table: 'captions',
-                    filter: `session_key=eq.${sessionParam}`
+                    filter: `broadcast_id=eq.${resolvedBroadcastId}`
+                },
+                (payload) => {
+                    handleIncomingCaption(payload.new);
+                }
+            )
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'captions',
+                    filter: `broadcast_id=eq.${resolvedBroadcastId}`
                 },
                 (payload) => {
                     handleIncomingCaption(payload.new);
                 }
             )
             .subscribe((status) => {
-                console.log(`[Supabase Realtime] Subscription status: ${status}`);
+                console.log(`[Supabase Realtime Status]: ${status}`);
                 if (status === 'SUBSCRIBED') {
-                    if (waitingTag) waitingTag.textContent = 'Conectado';
+                    if (waitingTag && inMemoryCaptions.length === 0) {
+                        waitingTag.textContent = 'Conectado (esperando directo)';
+                    }
                 }
             });
     }
@@ -727,90 +750,191 @@
     function handleIncomingCaption(row) {
         if (!row) return;
 
-        inMemoryCaptions.push(row);
         if (waitingTag) waitingTag.classList.add('hidden');
 
-        // Only render immediately if we are in live mode or watching close to live edge
-        if (isLiveMode || isCaptionSyncedWithVideo) {
-            renderCaption(row);
+        const existingIndex = inMemoryCaptions.findIndex(c => c.id === row.id);
+        if (existingIndex >= 0) {
+            inMemoryCaptions[existingIndex] = row;
+        } else {
+            inMemoryCaptions.push(row);
+            inMemoryCaptions.sort((a, b) => (Number(a.start_seconds) || 0) - (Number(b.start_seconds) || 0));
+        }
+
+        latestCaptionRecord = inMemoryCaptions[inMemoryCaptions.length - 1];
+
+        const rowSource = getRecordSourceLanguage(row);
+        if (rowSource && rowSource !== detectedSourceLanguage) {
+            detectedSourceLanguage = rowSource;
+        }
+
+        // Live playback immediate render
+        if (isLiveMode) {
+            renderCaptionRecord(row);
         }
     }
 
-    function syncCaptionsToVideoTime(videoTime) {
+    // ==============================================================================
+    // 8. Caption Extraction & Timecode Synchronization
+    // ==============================================================================
+    function extractCaptionInfo(record, targetLanguage) {
+        if (!record) return { text: '', isOriginal: true };
+
+        const lang = targetLanguage || 'Spanish';
+        let text = '';
+        let isOriginal = true;
+
+        // 1. Nested record.captions JSON object (ARI 2026 standard format)
+        if (record.captions && typeof record.captions === 'object') {
+            const langEntry = record.captions[lang] || 
+                              record.captions[lang.toLowerCase()] || 
+                              (lang === 'Spanish' ? (record.captions['es'] || record.captions['ES']) : (record.captions['en'] || record.captions['EN']));
+
+            if (langEntry) {
+                if (typeof langEntry === 'string') {
+                    text = langEntry;
+                } else if (typeof langEntry === 'object' && langEntry.text) {
+                    text = langEntry.text;
+                    if (typeof langEntry.sourceLanguage === 'boolean') {
+                        isOriginal = langEntry.sourceLanguage;
+                    }
+                }
+            }
+
+            // Fallback to Spanish or first available key if target was missing
+            if (!text) {
+                if (record.captions['Spanish']) {
+                    const sp = record.captions['Spanish'];
+                    text = typeof sp === 'string' ? sp : (sp.text || '');
+                    if (typeof sp === 'object' && typeof sp.sourceLanguage === 'boolean') isOriginal = sp.sourceLanguage;
+                } else {
+                    const firstKey = Object.keys(record.captions)[0];
+                    if (firstKey && record.captions[firstKey]) {
+                        const fb = record.captions[firstKey];
+                        text = typeof fb === 'string' ? fb : (fb.text || '');
+                        if (typeof fb === 'object' && typeof fb.sourceLanguage === 'boolean') isOriginal = fb.sourceLanguage;
+                    }
+                }
+            }
+        }
+
+        // 2. Flat columns fallback (text_es / text_en / text)
+        if (!text) {
+            if (lang === 'English') {
+                text = record.text_en || record.text || record.text_es || '';
+                isOriginal = (record.source_language === 'en' || record.source_language === 'English');
+            } else {
+                text = record.text_es || record.text || record.text_en || '';
+                isOriginal = (record.source_language === 'es' || record.source_language === 'Spanish');
+            }
+        }
+
+        return {
+            text: (text || '').trim(),
+            isOriginal: isOriginal
+        };
+    }
+
+    function getRecordSourceLanguage(record) {
+        if (!record) return null;
+        if (record.source_language) return record.source_language;
+        if (record.sourceLanguage) return record.sourceLanguage;
+
+        if (record.captions && typeof record.captions === 'object') {
+            for (const [k, v] of Object.entries(record.captions)) {
+                if (v && typeof v === 'object' && v.sourceLanguage === true) {
+                    return k;
+                }
+            }
+        }
+        return null;
+    }
+
+    function detectSourceLanguageFromData(records) {
+        if (!Array.isArray(records)) return;
+        for (let i = records.length - 1; i >= 0; i--) {
+            const src = getRecordSourceLanguage(records[i]);
+            if (src) {
+                detectedSourceLanguage = src;
+                return;
+            }
+        }
+    }
+
+    function updateOriginalTranslatedBadge(isOriginal) {
+        if (!infoTag) return;
+        if (isOriginal) {
+            infoTag.textContent = 'Original';
+            infoTag.className = 'info-tag badge-original';
+        } else {
+            infoTag.textContent = 'Traducido';
+            infoTag.className = 'info-tag badge-translated';
+        }
+    }
+
+    function syncCaptionsToVideoTime(currentTime) {
+        if (!isSubtitlesEnabled) {
+            if (subtitleTextEl && subtitleTextEl.textContent !== '') {
+                subtitleTextEl.textContent = '';
+            }
+            return;
+        }
+
         if (!inMemoryCaptions || inMemoryCaptions.length === 0) return;
 
-        // Binary search or sequential lookup for matching caption
+        // Find active caption matching currentTime: start_seconds <= currentTime <= end_seconds + 1.2s tolerance
+        let matchedRecord = null;
         let matchedIndex = -1;
+
         for (let i = inMemoryCaptions.length - 1; i >= 0; i--) {
             const cap = inMemoryCaptions[i];
-            const start = cap.start_seconds || 0;
-            const end = cap.end_seconds || (start + 5);
+            const start = Number(cap.start_seconds || 0);
+            const end = Number(cap.end_seconds || cap.start_seconds || 0) + 1.2;
 
-            if (videoTime >= start && videoTime <= end) {
+            if (currentTime >= start && currentTime <= end) {
+                matchedRecord = cap;
                 matchedIndex = i;
                 break;
             }
         }
 
-        if (matchedIndex !== -1 && matchedIndex !== lastMatchedCaptionIndex) {
-            lastMatchedCaptionIndex = matchedIndex;
-            renderCaption(inMemoryCaptions[matchedIndex]);
+        // Live fallback to latest record if near the live edge
+        if (!matchedRecord && latestCaptionRecord && isLiveMode) {
+            matchedRecord = latestCaptionRecord;
+        }
+
+        if (matchedRecord) {
+            if (matchedIndex !== lastMatchedCaptionIndex) {
+                lastMatchedCaptionIndex = matchedIndex;
+                renderCaptionRecord(matchedRecord);
+            }
         }
     }
 
-    function renderCaption(captionRow) {
-        if (!isSubtitlesEnabled || !subtitleTextEl) return;
+    function renderCaptionRecord(record) {
+        if (!subtitleTextEl || !record) return;
 
-        let displayText = '';
-        let isOriginal = true;
+        currentRenderedRecord = record;
+        const info = extractCaptionInfo(record, selectedLanguage);
+        const resolvedText = info.text;
 
-        if (selectedLanguage === 'English') {
-            if (captionRow.text_en && captionRow.text_en.trim() !== '') {
-                displayText = captionRow.text_en;
-                isOriginal = (captionRow.source_language === 'en' || captionRow.source_language === 'English');
-            } else {
-                displayText = captionRow.text || captionRow.text_es || '';
-                isOriginal = true;
-            }
-        } else {
-            // Spanish default
-            if (captionRow.text_es && captionRow.text_es.trim() !== '') {
-                displayText = captionRow.text_es;
-                isOriginal = (captionRow.source_language === 'es' || captionRow.source_language === 'Spanish');
-            } else {
-                displayText = captionRow.text || '';
-                isOriginal = true;
-            }
-        }
+        updateOriginalTranslatedBadge(info.isOriginal);
 
-        displayText = (displayText || '').trim();
-        if (!displayText) return;
+        if (!resolvedText) return;
 
         // Deduplication check
         const now = Date.now();
-        if (displayText === lastEmittedText && (now - lastEmittedTimestamp) < DEDUPLICATION_WINDOW_MS) {
+        if (resolvedText === lastEmittedText && (now - lastEmittedTimestamp) < DEDUPLICATION_WINDOW_MS) {
             return;
         }
 
-        lastEmittedText = displayText;
+        lastEmittedText = resolvedText;
         lastEmittedTimestamp = now;
 
-        subtitleTextEl.textContent = displayText;
-
-        // Update Original / Translated Tag
-        if (infoTag) {
-            if (isOriginal) {
-                infoTag.textContent = 'Original';
-                infoTag.className = 'info-tag badge-original';
-            } else {
-                infoTag.textContent = 'Traducido';
-                infoTag.className = 'info-tag badge-translated';
-            }
-        }
+        subtitleTextEl.textContent = resolvedText;
 
         // TTS Speech Synthesis if active
         if (ttsEnabled && 'speechSynthesis' in window) {
-            speakSubtitle(displayText, selectedLanguage);
+            speakSubtitle(resolvedText, selectedLanguage);
         }
     }
 
@@ -827,7 +951,7 @@
     }
 
     // ==============================================================================
-    // 8. Subtitle UI Controls & Language Selector
+    // 9. Subtitle UI Controls & Language Selector
     // ==============================================================================
     if (btnToggleSubtitles) {
         btnToggleSubtitles.addEventListener('click', () => {
@@ -871,15 +995,21 @@
             }
 
             // Re-render current caption in selected language
-            if (inMemoryCaptions && inMemoryCaptions.length > 0) {
-                const targetIdx = lastMatchedCaptionIndex >= 0 ? lastMatchedCaptionIndex : inMemoryCaptions.length - 1;
-                renderCaption(inMemoryCaptions[targetIdx]);
+            if (currentRenderedRecord) {
+                const info = extractCaptionInfo(currentRenderedRecord, selectedLanguage);
+                if (subtitleTextEl && info.text) {
+                    subtitleTextEl.textContent = info.text;
+                    updateOriginalTranslatedBadge(info.isOriginal);
+                }
+            } else if (inMemoryCaptions && inMemoryCaptions.length > 0) {
+                const targetIdx = lastMatchedCaptionIndex >= 0 ? lastMatchedCaptionIndex : 0;
+                renderCaptionRecord(inMemoryCaptions[targetIdx]);
             }
         });
     }
 
     // ==============================================================================
-    // 9. Heartbeat Telemetry (Supabase RPC ping_viewer_session)
+    // 10. Heartbeat Telemetry (Supabase RPC ping_viewer_session)
     // ==============================================================================
     async function sendHeartbeat() {
         if (!supabaseClient) return;
@@ -905,7 +1035,7 @@
     setTimeout(sendHeartbeat, 5000);
 
     // ==============================================================================
-    // 10. Bootstrap Application
+    // 11. Bootstrap Application
     // ==============================================================================
     loadConfig();
 
