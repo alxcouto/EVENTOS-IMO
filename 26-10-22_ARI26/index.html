@@ -596,7 +596,7 @@
 
                     <div class="embed-snippet-group">
                         <label>Script de Inyección Automática:</label>
-                        <pre><code>&lt;script src="https://eventos-imo.up.railway.app/26-10-22_ARI26/embed.js" async&gt;&lt;/script&gt;</code></pre>
+                        <pre><code id="embed-script-tag">&lt;script src="/26-10-22_ARI26/embed.js" async&gt;&lt;/script&gt;</code></pre>
                     </div>
                 </div>
             </section>
@@ -666,6 +666,11 @@
                     currentSearchTerm = e.target.value.toLowerCase().trim();
                     updateVisibility();
                 });
+            }
+
+            const embedTag = document.getElementById('embed-script-tag');
+            if (embedTag) {
+                embedTag.textContent = `<script src="${window.location.origin}/26-10-22_ARI26/embed.js" async><\/script>`;
             }
         });
 
