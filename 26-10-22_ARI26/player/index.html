@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARI 2026 | Reproductor en Directo - EVENTOS IMO Grupo Miranza</title>
+    <link rel="stylesheet" href="style.css?v=1">
+    <!-- Supabase JS Client v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Video & Subtitle Section (Unified Stage Container) -->
+        <main class="main-content">
+            <!-- Player Navigation Header -->
+            <header class="player-nav-bar">
+                <div class="player-nav-left">
+                    <a href="/26-10-22_ARI26/" class="btn-player-back" title="Volver a la Agenda de ARI 2026">
+                        <span class="back-arrow">←</span>
+                        <span>Agenda ARI 2026</span>
+                    </a>
+                    <span class="player-nav-divider">|</span>
+                    <span class="player-nav-title">IMO Grupo Miranza</span>
+                </div>
+
+                <div class="player-nav-center">
+                    <!-- Session Selector Dropdown -->
+                    <select id="player-session-select" class="session-select-dropdown" aria-label="Seleccionar Sesión">
+                        <option value="Presentacion_ARI26">Presentación Inaugural</option>
+                        <option value="session_1">Sesión 1 - Actualización Clínica</option>
+                        <option value="session_satellite_Essilor">Satélite - Essilor</option>
+                        <option value="session_2">Sesión 2 - Córnea & Superficie</option>
+                        <option value="session_satellite_Topcon">Satélite - Topcon</option>
+                        <option value="session_3">Sesión 3 - Diagnóstico & Imagen</option>
+                        <option value="session_satellite_CSO">Satélite - CSO</option>
+                        <option value="session_4">Sesión 4 - LIOs & Presbicia</option>
+                        <option value="session_satellite_biotech">Satélite - Biotech</option>
+                        <option value="session_5">Sesión 5 - Técnicas Quirúrgicas</option>
+                        <option value="session_satellite_ophtalmic">Satélite - Ophthalmic</option>
+                        <option value="session_6">Sesión 6 - Casos Complejos</option>
+                        <option value="session_7">Sesión 7 - Retina Médica</option>
+                        <option value="session_8">Sesión 8 - Glaucoma & PIO</option>
+                        <option value="session_satellite_ophtec">Satélite - Ophtec</option>
+                        <option value="session_9">Sesión 9 - Innovación Biomédica</option>
+                        <option value="session_satellite_alcon">Satélite - Alcon</option>
+                        <option value="session_10">Sesión 10 - Cristalino & Faco</option>
+                        <option value="session_11">Sesión 11 - Mesa Redonda</option>
+                        <option value="session_satellite_Jonhson">Satélite - Johnson & Johnson</option>
+                        <option value="Clausura_ARI26">Clausura ARI 2026</option>
+                    </select>
+
+                    <!-- Horizontal Scrollable Session Pills -->
+                    <div class="session-nav-pills-scroll" id="player-session-pills">
+                        <a href="?session=Presentacion_ARI26" class="session-pill" id="pill-Presentacion_ARI26">Presentación</a>
+                        <a href="?session=session_1" class="session-pill" id="pill-session_1">Sesión 1</a>
+                        <a href="?session=session_satellite_Essilor" class="session-pill" id="pill-session_satellite_Essilor">Sat. Essilor</a>
+                        <a href="?session=session_2" class="session-pill" id="pill-session_2">Sesión 2</a>
+                        <a href="?session=session_satellite_Topcon" class="session-pill" id="pill-session_satellite_Topcon">Sat. Topcon</a>
+                        <a href="?session=session_3" class="session-pill" id="pill-session_3">Sesión 3</a>
+                        <a href="?session=session_satellite_CSO" class="session-pill" id="pill-session_satellite_CSO">Sat. CSO</a>
+                        <a href="?session=session_4" class="session-pill" id="pill-session_4">Sesión 4</a>
+                        <a href="?session=session_satellite_biotech" class="session-pill" id="pill-session_satellite_biotech">Sat. Biotech</a>
+                        <a href="?session=session_5" class="session-pill" id="pill-session_5">Sesión 5</a>
+                        <a href="?session=session_satellite_ophtalmic" class="session-pill" id="pill-session_satellite_ophtalmic">Sat. Ophthalmic</a>
+                        <a href="?session=session_6" class="session-pill" id="pill-session_6">Sesión 6</a>
+                        <a href="?session=session_7" class="session-pill" id="pill-session_7">Sesión 7</a>
+                        <a href="?session=session_8" class="session-pill" id="pill-session_8">Sesión 8</a>
+                        <a href="?session=session_satellite_ophtec" class="session-pill" id="pill-session_satellite_ophtec">Sat. Ophtec</a>
+                        <a href="?session=session_9" class="session-pill" id="pill-session_9">Sesión 9</a>
+                        <a href="?session=session_satellite_alcon" class="session-pill" id="pill-session_satellite_alcon">Sat. Alcon</a>
+                        <a href="?session=session_10" class="session-pill" id="pill-session_10">Sesión 10</a>
+                        <a href="?session=session_11" class="session-pill" id="pill-session_11">Sesión 11</a>
+                        <a href="?session=session_satellite_Jonhson" class="session-pill" id="pill-session_satellite_Jonhson">Sat. J&J</a>
+                        <a href="?session=Clausura_ARI26" class="session-pill" id="pill-Clausura_ARI26">Clausura</a>
+                    </div>
+                </div>
+
+                <div class="player-nav-right">
+                    <button id="btn-theme-toggle" class="btn-theme-toggle" type="button" title="Alternar modo claro / oscuro" aria-label="Cambiar tema">
+                        <span class="theme-icon" id="theme-icon">☀️</span>
+                        <span class="theme-text" id="theme-text">CLARO</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- 1. YouTube Player Area with Option B Custom Controls & Shields -->
+            <section class="player-section">
+                <div class="player-wrapper" id="player-wrapper">
+                    <div class="video-responsive">
+                        <div id="player"></div>
+                    </div>
+
+                    <!-- Poster Fallback Layer -->
+                    <div id="poster-layer" class="poster-layer">
+                        <img id="poster-img" class="poster-img" alt="Session Poster" src="" />
+                        <div class="poster-overlay-gradient"></div>
+                        <div class="poster-content">
+                            <div class="poster-status-badge">
+                                <span class="pulse-dot"></span>
+                                <span id="poster-status-text">EMISIÓN EN DIRECTO</span>
+                            </div>
+                            <button id="btn-poster-play" class="btn-poster-action" aria-label="Reproducir emisión">
+                                <span class="play-icon">▶</span>
+                                <span class="play-text">REPRODUCIR</span>
+                            </button>
+                            <div id="poster-error-notice" class="poster-error-notice hidden">
+                                <span class="warning-icon">⚠️</span>
+                                <span id="poster-error-msg">Emisión protegida o aún no iniciada en reproductor externo.</span>
+                                <a id="poster-yt-link" href="#" target="_blank" class="btn-yt-external">
+                                    Ver en YouTube ↗
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Option B Transparent Pointer Shields -->
+                    <div class="yt-shield-full" id="yt-shield-full" title="Live Video Player"></div>
+                    <div class="yt-shield-top" title="Live Player"></div>
+                    <div class="yt-shield-bottom-right" title="Live Player"></div>
+
+                    <!-- Option C Central Unmute Overlay -->
+                    <div id="unmute-overlay" class="unmute-overlay faded">
+                        <button id="btn-unmute-overlay" class="btn-unmute-overlay" aria-label="Activar sonido">
+                            <span class="unmute-icon">🔊</span>
+                            <span class="unmute-text">TAP FOR SOUND</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom HTML5 Video Player Controls Bar -->
+                <div class="custom-player-controls" id="custom-player-controls">
+                    <!-- Hairline Timeline Scrubber -->
+                    <div class="timeline-container" id="timeline-container" title="Control de tiempo">
+                        <input type="range" id="input-custom-seek" class="ctrl-seek-bar" min="0" max="100" value="0" step="0.1" title="Time scrubber" aria-label="Control de tiempo">
+                        <div class="seek-fill" id="seek-fill"></div>
+                    </div>
+
+                    <div class="ctrl-row">
+                        <div class="ctrl-group left">
+                            <button id="btn-custom-play" class="btn-ctrl" title="Play / Pause Video">
+                                ▶ PLAY
+                            </button>
+                            <button id="btn-custom-mute" class="btn-ctrl" title="Mute / Unmute Video">
+                                🔊 MUTE
+                            </button>
+                            <input type="range" id="input-custom-volume" min="0" max="100" value="100" class="ctrl-slider" title="Volume Slider">
+                        </div>
+
+                        <div class="ctrl-group center">
+                            <button id="badge-live-status" class="badge-live" type="button" title="Live stream status">🔴 LIVE</button>
+                            <span id="display-player-time" class="time-display">00:00</span>
+                        </div>
+
+                        <div class="ctrl-group right">
+                            <button id="btn-custom-fs" class="btn-ctrl" title="Pantalla Completa">
+                                ⛶
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Subtitle Controls & Status Area -->
+            <section class="controls-section">
+                <div class="control-buttons-group">
+                    <button id="btn-toggle-subtitles" class="btn-mode active" title="Activar/Desactivar Subtítulos">
+                        <span class="btn-icon">👁️</span> SUBTITLES: <span id="subtitles-state-text">ON</span>
+                    </button>
+                    <button id="btn-tts" class="btn-tts" title="Lectura por Voz (TTS)">
+                        <span class="btn-icon">🔊</span> READ: <span id="tts-state-text">OFF</span>
+                    </button>
+
+                    <!-- Dynamic AI Subtitle Disclaimer -->
+                    <span id="ai-disclaimer" class="ai-disclaimer" title="Aviso IA">
+                        <span class="warning-icon">⚠️</span>
+                        <span id="ai-disclaimer-text">Los subtítulos generados por IA pueden contener imprecisiones</span>
+                    </span>
+                </div>
+
+                <div class="language-status-group">
+                    <div class="language-selector-wrapper">
+                        <label for="select-language">Idioma:</label>
+                        <select id="select-language" class="language-dropdown">
+                            <option value="Spanish" selected>🇪🇸 Spanish (Español)</option>
+                            <option value="English">🇬🇧 English</option>
+                        </select>
+                    </div>
+                    <div class="status-indicator-wrapper">
+                        <span id="info-tag" class="info-tag badge-original">Original</span>
+                        <span id="waiting-tag" class="waiting-tag">Waiting ...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Subtitle Display Box (Clean 2-line display) -->
+            <section class="subtitle-section">
+                <div class="subtitle-box" id="subtitle-box">
+                    <div class="subtitle-text-wrapper">
+                        <div class="subtitle-text" id="subtitle-text">
+                            ESPERANDO SUBTÍTULOS EN DIRECTO...
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Application Logic -->
+    <script src="script.js?v=1"></script>
+    <!-- YouTube IFrame Player API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>

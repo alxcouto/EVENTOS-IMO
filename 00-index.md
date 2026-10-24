@@ -41,7 +41,25 @@ Files created and configured for the **Be-Light** live event (Date: 2026-09-30):
 
 ---
 
-## 4. Platform Architecture & Hosting Structure
+## 4. Event: `26-10-22_ARI26` (Tier 2: Sub-Landing & Tier 3: Player)
+
+Files created and configured for the **ARI 2026** live event (Date: 2026-10-22):
+
+| File Path | Description | Key Responsibilities |
+| :--- | :--- | :--- |
+| [26-10-22_ARI26/00-index.md](./26-10-22_ARI26/00-index.md) | Event Documentation | Local file catalog, configuration guide, and 21-session inventory for ARI 2026. |
+| [26-10-22_ARI26/index.html](./26-10-22_ARI26/index.html) | Tier 2: Event Sub-Landing Page | Breadcrumbs, Miranza clinical hero banner, date, interactive compact agenda with live search and category filter, direct session player CTAs, and embed drawer. |
+| [26-10-22_ARI26/style.css](./26-10-22_ARI26/style.css) | Event Sub-Landing Stylesheet | Styles for hero header, search input, filter pills, and compact interactive agenda cards. |
+| [26-10-22_ARI26/config.json](./26-10-22_ARI26/config.json) | Event Configuration | Supabase project URL (`https://yzxnkotfjatpfflklaer.supabase.co`), public anon key, and YouTube broadcast IDs for all 21 event sessions. |
+| [26-10-22_ARI26/embed.js](./26-10-22_ARI26/embed.js) | Embeddable Helper Script | Discovers `.livespeech-embed` containers, injects isolated iframes, passes session parameters, and bridges telemetry to host Matomo `_paq`. |
+| [26-10-22_ARI26/player/index.html](./26-10-22_ARI26/player/index.html) | Tier 3: Dedicated Player UI | Responsive video player shell, top navigation bar (`← Agenda ARI 2026`), 21-session dropdown selector + smooth-scrolling pills, Option B controls, and 2-line subtitle display box. |
+| [26-10-22_ARI26/player/script.js](./26-10-22_ARI26/player/script.js) | Web Client Application Engine | Multi-path `config.json` loader with async gating (`tryInitYouTubePlayer`), dual dropdown/pill sync, YouTube IFrame API controller, Supabase Realtime captions, and Matomo postMessage bridge. |
+| [26-10-22_ARI26/player/style.css](./26-10-22_ARI26/player/style.css) | Web Client Design System | Responsive stylesheet supporting dark/light themes (`data-theme`), slim navigation bar, session dropdown, scrollable pills strip, Option B controls, and subtitle typography. |
+| [26-10-22_ARI26/player/config.json](./26-10-22_ARI26/player/config.json) | Local Config Mirror | Direct config access for client-side relative fetch (`./config.json`). |
+
+---
+
+## 5. Platform Architecture & Hosting Structure
 
 Current repository and deployment layout on Railway:
 
@@ -55,14 +73,25 @@ EVENTOS-IMO/
 ├── server.js                      # Multi-event HTTP routing engine
 ├── index.html                     # Platform directory page (links to event sub-landings)
 ├── style.css                      # Platform directory styling (Miranza design)
-└── 26-09-30_BeLight/              # Event: Be-Light (2026-09-30)
-    ├── 00-index.md                # Event-specific index
-    ├── index.html                 # Event sub-landing page (Tier 2)
+├── 26-09-30_BeLight/              # Event: Be-Light (2026-09-30)
+│   ├── 00-index.md                # Event-specific index
+│   ├── index.html                 # Event sub-landing page (Tier 2)
+│   ├── style.css                  # Event sub-landing styles
+│   ├── config.json                # Supabase & YouTube session mappings
+│   ├── embed.js                   # External embed & Matomo bridge script
+│   └── player/                    # Dedicated live player engine (Tier 3)
+│       ├── index.html             # Video player layout & back navigation
+│       ├── script.js              # Player engine with async config gating
+│       └── style.css              # Option B controls & subtitle styling
+└── 26-10-22_ARI26/                # Event: ARI 2026 (2026-10-22)
+    ├── 00-index.md                # Event-specific index & session catalog
+    ├── index.html                 # Compact interactive agenda & session picker (Tier 2)
     ├── style.css                  # Event sub-landing styles
-    ├── config.json                # Supabase & YouTube session mappings
+    ├── config.json                # Supabase & YouTube session mappings (21 sessions)
     ├── embed.js                   # External embed & Matomo bridge script
     └── player/                    # Dedicated live player engine (Tier 3)
-        ├── index.html             # Video player layout & back navigation
+        ├── index.html             # Player layout + 21-session dropdown & scrolling pills
         ├── script.js              # Player engine with async config gating
-        └── style.css              # Option B controls & subtitle styling
+        ├── style.css              # Option B controls & subtitle styling
+        └── config.json            # Local config mirror
 ```
