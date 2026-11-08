@@ -59,7 +59,26 @@ Files created and configured for the **ARI 2026** live event (Date: 2026-10-22):
 
 ---
 
-## 5. Platform Architecture & Hosting Structure
+## 5. Event: `26-11-12_TIR26` (Tier 2: Sub-Landing & Tier 3: Player)
+
+Files created and configured for the **TIR 2026 · Trends in Retina (6th Edition)** live event (Dates: 2026-11-12 to 2026-11-14):
+
+| File Path | Description | Key Responsibilities |
+| :--- | :--- | :--- |
+| [26-11-12_TIR26/00-index.md](./26-11-12_TIR26/00-index.md) | Event Documentation | Local file catalog, configuration guide, and 10-session inventory for TIR 2026. |
+| [26-11-12_TIR26/Program_ENG_TIR_2026.pdf](./26-11-12_TIR26/Program_ENG_TIR_2026.pdf) | Official Congress PDF | Visual reference and downloadable 3-day scientific program (English). |
+| [26-11-12_TIR26/index.html](./26-11-12_TIR26/index.html) | Tier 2: Event Sub-Landing Page | TIR 2026 cover-styled hero, 10-session quick-launch pill strip, 3-day interactive pill agenda (every session and sub-lecture pill opens the player), Organising Committee & Speakers directory, and embed drawer. |
+| [26-11-12_TIR26/style.css](./26-11-12_TIR26/style.css) | Event Sub-Landing Stylesheet | TIR 2026 crimson-orange gradient (`#E31E24` → `#F37021`), dark slate day banners (`#1B2432`), warm coral session cards, and interactive lecture pills. |
+| [26-11-12_TIR26/config.json](./26-11-12_TIR26/config.json) | Event Configuration | Supabase project URL (`https://kcdhrxtbylpaceeoglpq.supabase.co`), public anon key, and YouTube broadcast IDs for all 10 event sessions (`SESSION_1`–`SESSION_8`, `WORKSHOP`, `KEYNOTE_LECTURE`). |
+| [26-11-12_TIR26/embed.js](./26-11-12_TIR26/embed.js) | Embeddable Helper Script | Discovers `.livespeech-embed` containers, injects isolated iframes, passes session parameters, and bridges telemetry to host Matomo `_paq`. |
+| [26-11-12_TIR26/player/index.html](./26-11-12_TIR26/player/index.html) | Tier 3: Dedicated Player UI | Responsive video player shell, top navigation bar (`← Agenda TIR 2026`), 10-session dropdown selector + smooth-scrolling pills, Option B controls, and 2-line subtitle display box. |
+| [26-11-12_TIR26/player/script.js](./26-11-12_TIR26/player/script.js) | Web Client Application Engine | Multi-path `config.json` loader with async gating (`tryInitYouTubePlayer`), dual dropdown/pill sync, YouTube IFrame API controller, Supabase Realtime captions, and Matomo postMessage bridge. |
+| [26-11-12_TIR26/player/style.css](./26-11-12_TIR26/player/style.css) | Web Client Design System | Responsive stylesheet supporting dark/light themes (`data-theme`), slim navigation bar, session dropdown, scrollable pills strip, Option B controls, and subtitle typography. |
+| [26-11-12_TIR26/player/config.json](./26-11-12_TIR26/player/config.json) | Local Config Mirror | Direct config access for client-side relative fetch (`./config.json`). |
+
+---
+
+## 6. Platform Architecture & Hosting Structure
 
 Current repository and deployment layout on Railway:
 
@@ -83,14 +102,26 @@ EVENTOS-IMO/
 │       ├── index.html             # Video player layout & back navigation
 │       ├── script.js              # Player engine with async config gating
 │       └── style.css              # Option B controls & subtitle styling
-└── 26-10-22_ARI26/                # Event: ARI 2026 (2026-10-22)
-    ├── 00-index.md                # Event-specific index & session catalog
-    ├── index.html                 # Compact interactive agenda & session picker (Tier 2)
-    ├── style.css                  # Event sub-landing styles
-    ├── config.json                # Supabase & YouTube session mappings (21 sessions)
+├── 26-10-22_ARI26/                # Event: ARI 2026 (2026-10-22)
+│   ├── 00-index.md                # Event-specific index & session catalog
+│   ├── index.html                 # Compact interactive agenda & session picker (Tier 2)
+│   ├── style.css                  # Event sub-landing styles
+│   ├── config.json                # Supabase & YouTube session mappings (21 sessions)
+│   ├── embed.js                   # External embed & Matomo bridge script
+│   └── player/                    # Dedicated live player engine (Tier 3)
+│       ├── index.html             # Player layout + 21-session dropdown & scrolling pills
+│       ├── script.js              # Player engine with async config gating
+│       ├── style.css              # Option B controls & subtitle styling
+│       └── config.json            # Local config mirror
+└── 26-11-12_TIR26/                # Event: TIR 2026 - Trends in Retina (2026-11-12 to 14)
+    ├── 00-index.md                # Event-specific index & 10-session catalog
+    ├── Program_ENG_TIR_2026.pdf   # Official congress program PDF
+    ├── index.html                 # 3-day interactive pill agenda & faculty directory (Tier 2)
+    ├── style.css                  # TIR 2026 crimson-orange sub-landing styles
+    ├── config.json                # Supabase & YouTube session mappings (10 sessions)
     ├── embed.js                   # External embed & Matomo bridge script
     └── player/                    # Dedicated live player engine (Tier 3)
-        ├── index.html             # Player layout + 21-session dropdown & scrolling pills
+        ├── index.html             # Player layout + 10-session dropdown & scrolling pills
         ├── script.js              # Player engine with async config gating
         ├── style.css              # Option B controls & subtitle styling
         └── config.json            # Local config mirror

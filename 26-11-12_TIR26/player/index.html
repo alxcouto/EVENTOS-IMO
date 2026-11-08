@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIR 2026 · Trends in Retina | Reproductor en Directo - EVENTOS IMO Grupo Miranza</title>
+    <link rel="stylesheet" href="style.css?v=1">
+    <!-- Supabase JS Client v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Video & Subtitle Section (Unified Stage Container) -->
+        <main class="main-content">
+            <!-- Player Navigation Header -->
+            <header class="player-nav-bar">
+                <div class="player-nav-left">
+                    <a href="/26-11-12_TIR26/" class="btn-player-back" aria-label="Volver a la Agenda de TIR 2026">
+                        <span class="back-arrow" aria-hidden="true">←</span>
+                        <span>Agenda TIR 2026</span>
+                    </a>
+                    <span class="player-nav-divider" aria-hidden="true">|</span>
+                    <span class="player-nav-title">Trends in Retina</span>
+                </div>
+
+                <div class="player-nav-center">
+                    <!-- Session Selector Dropdown -->
+                    <label for="player-session-select" class="visually-hidden">Seleccionar Sesión de TIR 2026</label>
+                    <select id="player-session-select" class="session-select-dropdown">
+                        <option value="SESSION_1">SESSION I · Retina in Action</option>
+                        <option value="WORKSHOP">WORKSHOP · Ocular Ultrasound &amp; VR</option>
+                        <option value="SESSION_2">SESSION II · Surgical Video Session 1</option>
+                        <option value="SESSION_3">SESSION III · High Myopia &amp; Uveitis</option>
+                        <option value="KEYNOTE_LECTURE">KEYNOTE · Dr. Borja Corcóstegui</option>
+                        <option value="SESSION_4">SESSION IV · Retinal Imaging &amp; AI</option>
+                        <option value="SESSION_5">SESSION V · Medical Retina 2</option>
+                        <option value="SESSION_6">SESSION VI · Surgical Video Session 2</option>
+                        <option value="SESSION_7">SESSION VII · Surgical Retina</option>
+                        <option value="SESSION_8">SESSION VIII · Talent Challenge</option>
+                    </select>
+
+                    <!-- Horizontal Scrollable Session Pills -->
+                    <nav class="session-nav-pills-scroll" id="player-session-pills" aria-label="Sesiones de TIR 2026">
+                        <a href="?session=SESSION_1" class="session-pill" id="pill-SESSION_1">Session I</a>
+                        <a href="?session=WORKSHOP" class="session-pill" id="pill-WORKSHOP">Workshop</a>
+                        <a href="?session=SESSION_2" class="session-pill" id="pill-SESSION_2">Session II</a>
+                        <a href="?session=SESSION_3" class="session-pill" id="pill-SESSION_3">Session III</a>
+                        <a href="?session=KEYNOTE_LECTURE" class="session-pill" id="pill-KEYNOTE_LECTURE">Keynote</a>
+                        <a href="?session=SESSION_4" class="session-pill" id="pill-SESSION_4">Session IV</a>
+                        <a href="?session=SESSION_5" class="session-pill" id="pill-SESSION_5">Session V</a>
+                        <a href="?session=SESSION_6" class="session-pill" id="pill-SESSION_6">Session VI</a>
+                        <a href="?session=SESSION_7" class="session-pill" id="pill-SESSION_7">Session VII</a>
+                        <a href="?session=SESSION_8" class="session-pill" id="pill-SESSION_8">Session VIII</a>
+                    </nav>
+                </div>
+
+                <div class="player-nav-right">
+                    <button id="btn-theme-toggle" class="btn-theme-toggle" type="button" aria-label="Alternar modo claro / oscuro">
+                        <span class="theme-icon" id="theme-icon" aria-hidden="true">☀️</span>
+                        <span class="theme-text" id="theme-text">CLARO</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- 1. YouTube Player Area with Option B Custom Controls & Shields -->
+            <section class="player-section">
+                <div class="player-wrapper" id="player-wrapper">
+                    <div class="video-responsive">
+                        <div id="player"></div>
+                    </div>
+
+                    <!-- Poster Fallback Layer -->
+                    <div id="poster-layer" class="poster-layer">
+                        <img id="poster-img" class="poster-img" alt="Vista previa de la sesión TIR 2026" src="" />
+                        <div class="poster-overlay-gradient"></div>
+                        <div class="poster-content">
+                            <div class="poster-status-badge">
+                                <span class="pulse-dot" aria-hidden="true"></span>
+                                <span id="poster-status-text">TIR 2026 · EMISIÓN EN DIRECTO</span>
+                            </div>
+                            <button id="btn-poster-play" class="btn-poster-action" type="button" aria-label="Reproducir emisión">
+                                <span class="play-icon" aria-hidden="true">▶</span>
+                                <span class="play-text">REPRODUCIR</span>
+                            </button>
+                            <div id="poster-error-notice" class="poster-error-notice hidden" role="alert">
+                                <span class="warning-icon" aria-hidden="true">⚠️</span>
+                                <span id="poster-error-msg">Emisión protegida o aún no iniciada en reproductor externo.</span>
+                                <a id="poster-yt-link" href="#" target="_blank" rel="noopener" class="btn-yt-external">
+                                    Ver en YouTube ↗
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Option B Transparent Pointer Shields -->
+                    <div class="yt-shield-full" id="yt-shield-full"></div>
+                    <div class="yt-shield-top"></div>
+                    <div class="yt-shield-bottom-right"></div>
+
+                    <!-- Option C Central Unmute Overlay -->
+                    <div id="unmute-overlay" class="unmute-overlay faded">
+                        <button id="btn-unmute-overlay" class="btn-unmute-overlay" type="button" aria-label="Activar sonido">
+                            <span class="unmute-icon" aria-hidden="true">🔊</span>
+                            <span class="unmute-text">TAP FOR SOUND</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom HTML5 Video Player Controls Bar -->
+                <div class="custom-player-controls" id="custom-player-controls">
+                    <!-- Hairline Timeline Scrubber -->
+                    <div class="timeline-container" id="timeline-container">
+                        <label for="input-custom-seek" class="visually-hidden">Control de tiempo del vídeo</label>
+                        <input type="range" id="input-custom-seek" class="ctrl-seek-bar" min="0" max="100" value="0" step="0.1">
+                        <div class="seek-fill" id="seek-fill"></div>
+                    </div>
+
+                    <div class="ctrl-row">
+                        <div class="ctrl-group left">
+                            <button id="btn-custom-play" class="btn-ctrl" type="button" aria-label="Reproducir o pausar vídeo">
+                                ▶ PLAY
+                            </button>
+                            <button id="btn-custom-mute" class="btn-ctrl" type="button" aria-label="Silenciar o activar audio">
+                                🔊 MUTE
+                            </button>
+                            <label for="input-custom-volume" class="visually-hidden">Volumen</label>
+                            <input type="range" id="input-custom-volume" min="0" max="100" value="100" class="ctrl-slider">
+                        </div>
+
+                        <div class="ctrl-group center">
+                            <button id="badge-live-status" class="badge-live" type="button">🔴 LIVE</button>
+                            <span id="display-player-time" class="time-display">00:00</span>
+                        </div>
+
+                        <div class="ctrl-group right">
+                            <button id="btn-custom-fs" class="btn-ctrl" type="button" aria-label="Pantalla Completa">
+                                ⛶
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Subtitle Controls & Status Area -->
+            <section class="controls-section">
+                <div class="control-buttons-group">
+                    <button id="btn-toggle-subtitles" class="btn-mode active" type="button" aria-pressed="true">
+                        <span class="btn-icon" aria-hidden="true">👁️</span> SUBTITLES: <span id="subtitles-state-text">ON</span>
+                    </button>
+                    <button id="btn-tts" class="btn-tts" type="button" aria-pressed="false">
+                        <span class="btn-icon" aria-hidden="true">🔊</span> READ: <span id="tts-state-text">OFF</span>
+                    </button>
+
+                    <!-- Dynamic AI Subtitle Disclaimer -->
+                    <span id="ai-disclaimer" class="ai-disclaimer">
+                        <span class="warning-icon" aria-hidden="true">⚠️</span>
+                        <span id="ai-disclaimer-text">Los subtítulos generados por IA pueden contener imprecisiones</span>
+                    </span>
+                </div>
+
+                <div class="language-status-group">
+                    <div class="language-selector-wrapper">
+                        <label for="select-language">Idioma:</label>
+                        <select id="select-language" class="language-dropdown">
+                            <option value="Spanish" selected>🇪🇸 Spanish (Español)</option>
+                            <option value="English">🇬🇧 English</option>
+                        </select>
+                    </div>
+                    <div class="status-indicator-wrapper">
+                        <span id="info-tag" class="info-tag badge-original">Original</span>
+                        <span id="waiting-tag" class="waiting-tag">Waiting ...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Subtitle Display Box (Clean 2-line display) -->
+            <section class="subtitle-section">
+                <div class="subtitle-box" id="subtitle-box" aria-live="polite" aria-atomic="true">
+                    <div class="subtitle-text-wrapper">
+                        <div class="subtitle-text" id="subtitle-text">
+                            ESPERANDO SUBTÍTULOS EN DIRECTO...
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Application Logic -->
+    <script src="script.js?v=1"></script>
+    <!-- YouTube IFrame Player API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>

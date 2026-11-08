@@ -1,0 +1,1115 @@
+/* ==============================================================================
+   TIR 2026 (Trends in Retina) Event Sub-Landing Page Styles
+   Visual Guide: Program_ENG_TIR_2026.pdf (6th Edition, Nov 12-14, 2026)
+   Inherits base Miranza clinical design tokens from /style.css
+   ============================================================================== */
+
+:root {
+    --tir-crimson: #E31E24;
+    --tir-crimson-dark: #B9151B;
+    --tir-orange: #F37021;
+    --tir-amber: #FBB03B;
+    --tir-gradient: linear-gradient(90deg, #E31E24 0%, #F37021 100%);
+    --tir-slate-header: #1B2432;
+    --tir-slate-sub: #DFE4EA;
+    --tir-coral-bg: #FDF3F0;
+    --tir-coral-header: #F9DCD3;
+    --tir-coral-border: #F3C2B4;
+    --tir-coral-hover: #FBE6DF;
+    --tir-break-bg: #E8ECEF;
+    --tir-charcoal: #22252A;
+}
+
+/* Visually hidden utility for accessible labels */
+.visually-hidden:where(:not(:focus-within, :active)) {
+    position: absolute !important;
+    clip-path: inset(50%) !important;
+    overflow: hidden !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    white-space: nowrap !important;
+}
+
+/* Custom keyboard focus indicator */
+:where(a:any-link, button, input, select, pre):focus-visible {
+    outline: 3px solid var(--tir-crimson);
+    outline-offset: 2px;
+}
+
+.nav-back-link {
+    color: rgba(255, 255, 255, 0.88);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.08);
+    transition: var(--transition-standard);
+}
+
+.nav-back-link:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
+}
+
+/* ==============================================================================
+   1. TIR 2026 Hero Section (Inspired by Program_ENG_TIR_2026.pdf Cover)
+   ============================================================================== */
+.tir-hero-section {
+    background:
+        radial-gradient(circle at 82% 22%, rgba(243, 112, 33, 0.18) 0%, rgba(227, 30, 36, 0.08) 38%, transparent 70%),
+        linear-gradient(135deg, #121924 0%, #1B2432 58%, #2A1820 100%);
+    color: #FFFFFF;
+    padding: 40px 24px 52px;
+    border-bottom: 4px solid var(--tir-crimson);
+    position: relative;
+    overflow: hidden;
+}
+
+.tir-hero-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 0.85fr;
+    align-items: center;
+    gap: 36px;
+}
+
+.breadcrumb-trail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+}
+
+.breadcrumb-trail a {
+    color: #FF8A65;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.breadcrumb-trail a:hover {
+    text-decoration: underline;
+}
+
+.bc-sep {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.bc-current {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+}
+
+.tir-edition-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.tir-program-ribbon {
+    background: var(--tir-gradient);
+    color: #FFFFFF;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+}
+
+.tir-interp-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(243, 112, 33, 0.45);
+    color: #FFE4D6;
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+}
+
+.tir-brand-lockup {
+    margin-bottom: 10px;
+}
+
+.tir-main-logo {
+    font-family: 'Oswald', 'Inter', sans-serif;
+    font-size: clamp(2.8rem, 5.5vw, 4.4rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: 0.01em;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 14px;
+}
+
+.tir-letters {
+    color: #FFFFFF;
+}
+
+.tir-i-dot {
+    position: relative;
+    display: inline-block;
+}
+
+.tir-i-dot::before {
+    content: '';
+    position: absolute;
+    top: -0.06em;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0.22em;
+    height: 0.14em;
+    background: var(--tir-crimson);
+    border-radius: 2px;
+}
+
+.tir-year {
+    color: var(--tir-crimson);
+}
+
+.tir-sub-logo {
+    display: block;
+    width: 100%;
+    font-family: 'Oswald', 'Inter', sans-serif;
+    font-size: clamp(1.35rem, 2.5vw, 1.95rem);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: #E2E8F0;
+    margin-top: 4px;
+}
+
+.tir-hero-tagline {
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    font-weight: 700;
+    color: #FF7A59;
+    margin-bottom: 10px;
+}
+
+.tir-hero-venue {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #F8FAFC;
+    margin-bottom: 14px;
+}
+
+.venue-dot {
+    color: var(--tir-orange);
+}
+
+.tir-hero-desc {
+    max-width: 720px;
+    font-size: 0.96rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.84);
+    margin-bottom: 24px;
+}
+
+.tir-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.btn-tir-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--tir-gradient);
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 11px 20px;
+    border-radius: var(--radius-full);
+    box-shadow: 0 6px 18px rgba(227, 30, 36, 0.35);
+    transition: var(--transition-standard);
+}
+
+.btn-tir-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(227, 30, 36, 0.48);
+}
+
+.btn-tir-secondary,
+.btn-tir-pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: var(--radius-full);
+    transition: var(--transition-standard);
+}
+
+.btn-tir-secondary:hover,
+.btn-tir-pdf:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Decorative Retinal Sunburst Card */
+.retinal-sunburst-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    padding: 20px 20px 18px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+    text-align: center;
+}
+
+.retinal-sunburst-svg {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px;
+}
+
+.sunburst-card-caption {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 12px;
+}
+
+.sc-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #FFFFFF;
+}
+
+.sc-sub {
+    font-size: 0.82rem;
+    color: #FFAB91;
+    font-weight: 600;
+}
+
+.sc-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.sc-badges span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.09);
+    color: #F1F5F9;
+}
+
+/* ==============================================================================
+   2. Quick-Launch 10-Session Pill Bar
+   ============================================================================== */
+.quick-pills-strip-box {
+    background: #FFFFFF;
+    border: 1px solid var(--tir-coral-border);
+    border-left: 5px solid var(--tir-crimson);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-card);
+}
+
+.quick-pills-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.quick-pills-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--tir-slate-header);
+}
+
+.quick-pills-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.quick-session-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.quick-session-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    background: var(--tir-coral-bg);
+    border: 1px solid var(--tir-coral-border);
+    color: var(--tir-charcoal);
+    padding: 7px 13px;
+    border-radius: var(--radius-full);
+    font-size: 0.81rem;
+    font-weight: 600;
+    transition: var(--transition-standard);
+}
+
+.quick-session-pill:hover {
+    background: var(--tir-gradient);
+    border-color: var(--tir-crimson);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(227, 30, 36, 0.25);
+}
+
+.qsp-day {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: var(--radius-full);
+    background: rgba(227, 30, 36, 0.12);
+    color: var(--tir-crimson);
+    letter-spacing: 0.03em;
+}
+
+.quick-session-pill:hover .qsp-day {
+    background: rgba(255, 255, 255, 0.22);
+    color: #FFFFFF;
+}
+
+.qsp-play {
+    font-size: 0.7rem;
+    color: var(--tir-crimson);
+}
+
+.quick-session-pill:hover .qsp-play {
+    color: #FFFFFF;
+}
+
+/* ==============================================================================
+   3. Search & Day Filter Controls
+   ============================================================================== */
+.agenda-controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+    background: var(--bg-card);
+    padding: 16px 20px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card);
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+    max-width: 440px;
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    padding: 10px 16px 10px 38px;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    background: var(--bg-page);
+    color: var(--text-primary);
+    transition: var(--transition-standard);
+    font-family: inherit;
+}
+
+.search-input-wrapper input:focus {
+    outline: none;
+    border-color: var(--tir-crimson);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.12);
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.day-filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-btn {
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px 15px;
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-standard);
+}
+
+.filter-btn:hover:not(.active) {
+    background: var(--tir-coral-bg);
+    border-color: var(--tir-coral-border);
+    color: var(--tir-crimson);
+}
+
+.filter-btn.active {
+    background: var(--tir-slate-header);
+    color: #FFFFFF;
+    border-color: var(--tir-slate-header);
+}
+
+/* ==============================================================================
+   4. 3-Day Program Schedule Blocks (Modeled on Program_ENG_TIR_2026.pdf)
+   ============================================================================== */
+.program-day-block {
+    margin-bottom: 42px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    background: #FFFFFF;
+    box-shadow: var(--shadow-card);
+}
+
+.pdf-day-banner {
+    background: var(--tir-slate-header);
+    color: #FFFFFF;
+}
+
+.pdf-day-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pdf-day-title-row h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #FFFFFF;
+}
+
+.pdf-day-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--tir-gradient);
+    color: #FFFFFF;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+}
+
+.pdf-table-subheader {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    background: var(--tir-slate-sub);
+    color: var(--tir-charcoal);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 8px 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.day-schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    background: #F8FAFC;
+}
+
+/* Non-streamed Gray Break / Secretariat / Lunch Pills */
+.schedule-break-pill {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+    gap: 18px;
+    background: var(--tir-break-bg);
+    border: 1px solid #D5DCE2;
+    border-radius: var(--radius-full);
+    padding: 10px 20px;
+    font-size: 0.88rem;
+    color: var(--tir-charcoal);
+}
+
+.schedule-break-pill.industry {
+    border-radius: var(--radius-md);
+    background: #F1F5F9;
+    align-items: flex-start;
+}
+
+.break-time {
+    font-weight: 700;
+    color: var(--tir-charcoal);
+    font-variant-numeric: tabular-nums;
+}
+
+.break-label {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--tir-charcoal);
+}
+
+.break-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.industry-note {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+/* Streamed Session Pill-Card (Warm Coral / Crimson from PDF) */
+.session-pill-card {
+    background: var(--tir-coral-bg);
+    border: 1px solid var(--tir-coral-border);
+    border-left: 5px solid var(--tir-crimson);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(227, 30, 36, 0.06);
+    transition: var(--transition-standard);
+}
+
+.session-pill-card:hover {
+    border-color: #EB9880;
+    box-shadow: 0 8px 22px rgba(227, 30, 36, 0.11);
+}
+
+.session-pill-card.highlight-workshop {
+    border-left-color: var(--tir-orange);
+}
+
+.session-pill-card.highlight-keynote {
+    border-left-color: #B9151B;
+    background: linear-gradient(135deg, #FCE8E2 0%, #FDF4F1 100%);
+}
+
+.session-pill-top {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 18px 20px 14px;
+    background: var(--tir-coral-header);
+    border-bottom: 1px solid var(--tir-coral-border);
+}
+
+.session-time-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.session-start-time {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: var(--tir-crimson);
+    font-variant-numeric: tabular-nums;
+}
+
+.session-key-chip {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: var(--tir-crimson);
+    color: #FFFFFF;
+}
+
+.session-key-chip.workshop {
+    background: var(--tir-orange);
+}
+
+.session-key-chip.keynote {
+    background: #991B1B;
+}
+
+.yt-id-badge {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    font-size: 0.68rem;
+    background: rgba(255, 255, 255, 0.75);
+    color: var(--text-secondary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.session-main-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.session-main-title {
+    font-size: 1.06rem;
+    font-weight: 800;
+    color: var(--tir-crimson);
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+}
+
+.session-faculty-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 0.86rem;
+    color: var(--tir-charcoal);
+    line-height: 1.45;
+}
+
+.session-cta-col {
+    display: flex;
+    align-items: center;
+}
+
+.btn-open-player {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--tir-gradient);
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(227, 30, 36, 0.28);
+    transition: var(--transition-standard);
+}
+
+.btn-open-player:hover {
+    background: linear-gradient(90deg, #C8161D 0%, #E05E12 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(227, 30, 36, 0.38);
+}
+
+/* ==============================================================================
+   5. Interactive Pill-Like Sub-Agenda (Individual Lectures inside each Session)
+   ============================================================================== */
+.sub-agenda-pills-container {
+    padding: 14px 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sub-agenda-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #7C2D12;
+    letter-spacing: 0.01em;
+}
+
+.sub-agenda-block-header {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--tir-charcoal);
+    background: rgba(227, 30, 36, 0.1);
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    margin-top: 4px;
+}
+
+.sub-agenda-pills-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.lecture-pill {
+    display: grid;
+    grid-template-columns: 82px 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    background: #FFFFFF;
+    border: 1px solid #F1CFC5;
+    border-radius: var(--radius-full);
+    padding: 8px 16px;
+    text-decoration: none;
+    color: var(--tir-charcoal);
+    font-size: 0.88rem;
+    transition: var(--transition-standard);
+}
+
+.lecture-pill:hover {
+    background: #FFF7F5;
+    border-color: var(--tir-crimson);
+    transform: translateX(4px);
+    box-shadow: 0 3px 10px rgba(227, 30, 36, 0.12);
+}
+
+.lp-time {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--tir-charcoal);
+    background: #FDEAE4;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.lecture-pill:hover .lp-time {
+    background: var(--tir-crimson);
+    color: #FFFFFF;
+}
+
+.lp-title {
+    font-weight: 500;
+    color: var(--tir-charcoal);
+    line-height: 1.35;
+}
+
+.lp-speaker {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #9A1B1F;
+    background: #FDF2EE;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.lp-action {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--tir-coral-header);
+    color: var(--tir-crimson);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    transition: var(--transition-standard);
+}
+
+.lecture-pill:hover .lp-action {
+    background: var(--tir-crimson);
+    color: #FFFFFF;
+    transform: scale(1.1);
+}
+
+/* Empty search notice */
+.no-results-notice {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--bg-card);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+}
+
+/* ==============================================================================
+   6. Organising Committee & Speakers Section (Pages 2 & 3 of PDF)
+   ============================================================================== */
+.faculty-directory-section {
+    background: #FFFFFF;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    margin-top: 20px;
+    margin-bottom: 36px;
+}
+
+.tir-gradient-banner {
+    background: var(--tir-gradient);
+    color: #FFFFFF;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tir-gradient-banner h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.tir-gradient-banner span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.92;
+}
+
+.faculty-group {
+    padding: 22px 24px;
+}
+
+.faculty-group:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.faculty-group-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--tir-crimson);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+}
+
+.faculty-pills-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+}
+
+.faculty-member-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius-full);
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    transition: var(--transition-standard);
+}
+
+.faculty-member-pill:hover {
+    border-color: var(--tir-coral-border);
+    background: var(--tir-coral-bg);
+}
+
+.fm-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--tir-slate-header);
+    color: #FFFFFF;
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.faculty-member-pill.intl .fm-avatar {
+    background: var(--tir-gradient);
+}
+
+.faculty-member-pill.local .fm-avatar {
+    background: var(--blue-accent);
+}
+
+.fm-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.fm-info strong {
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    line-height: 1.25;
+}
+
+.fm-info span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ==============================================================================
+   7. Embed Resources Section
+   ============================================================================== */
+.embed-resources-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-card);
+}
+
+.embed-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.embed-box-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--tir-slate-header);
+    margin-bottom: 4px;
+}
+
+.embed-box-caption {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.btn-toggle-embed {
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    color: var(--tir-slate-header);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.86rem;
+    cursor: pointer;
+    transition: var(--transition-standard);
+}
+
+.btn-toggle-embed:hover {
+    background: var(--tir-coral-bg);
+    border-color: var(--tir-crimson);
+    color: var(--tir-crimson);
+}
+
+.embed-details-panel {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.embed-snippet-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--tir-slate-header);
+    margin-bottom: 8px;
+}
+
+.embed-snippet-group pre {
+    background: #0b1120;
+    color: #FFAB91;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 0.84rem;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ==============================================================================
+   8. Responsive Breakpoints
+   ============================================================================== */
+@media (max-width: 920px) {
+    .tir-hero-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .session-pill-top {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .session-time-col {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .btn-open-player {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .lecture-pill {
+        grid-template-columns: 76px 1fr auto;
+        border-radius: 12px;
+    }
+
+    .lp-speaker {
+        grid-column: 2 / 4;
+        justify-self: start;
+    }
+}
+
+@media (max-width: 600px) {
+    .pdf-table-subheader {
+        display: none;
+    }
+
+    .schedule-break-pill {
+        grid-template-columns: 1fr;
+        gap: 4px;
+        border-radius: 10px;
+    }
+
+    .lecture-pill {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 12px 14px;
+    }
+
+    .lp-time {
+        justify-self: start;
+    }
+
+    .lp-speaker {
+        grid-column: 1;
+        white-space: normal;
+    }
+
+    .lp-action {
+        display: none;
+    }
+}
