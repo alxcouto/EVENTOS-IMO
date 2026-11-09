@@ -629,6 +629,10 @@
     background: linear-gradient(135deg, #FCE8E2 0%, #FDF4F1 100%);
 }
 
+.session-pill-card.highlight-industry {
+    border-left-color: #D97706;
+}
+
 .session-pill-top {
     display: grid;
     grid-template-columns: 120px 1fr auto;
@@ -669,6 +673,10 @@
 
 .session-key-chip.keynote {
     background: #991B1B;
+}
+
+.session-key-chip.industry {
+    background: #B45309;
 }
 
 .yt-id-badge {
