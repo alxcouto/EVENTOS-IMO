@@ -868,18 +868,19 @@
 
 .session-faculty-meta .speaker-trigger,
 .break-detail .speaker-trigger {
-    text-decoration: underline;
-    text-decoration-style: dotted;
-    text-decoration-color: rgba(227, 30, 36, 0.55);
-    text-underline-offset: 3px;
-    padding: 1px 3px;
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--tir-charcoal);
+    padding: 1px 6px;
+    margin: 0 -2px;
+    border-radius: var(--radius-full);
 }
 
 .session-faculty-meta .speaker-trigger:hover,
 .break-detail .speaker-trigger:hover {
     color: var(--tir-crimson);
-    background: rgba(227, 30, 36, 0.09);
-    text-decoration-style: solid;
+    background: rgba(227, 30, 36, 0.1);
+    text-decoration: none;
 }
 
 .lp-speaker.speaker-trigger:hover,
