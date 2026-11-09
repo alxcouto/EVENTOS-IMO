@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIR 2026 · Trends in Retina | Reproductor en Directo - EVENTOS IMO Grupo Miranza</title>
+    <title>TIR 2026 · Trends in Retina | Live Broadcast Player - EVENTOS IMO Grupo Miranza</title>
     <link rel="stylesheet" href="style.css?v=1">
     <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -15,9 +15,9 @@
             <!-- Player Navigation Header -->
             <header class="player-nav-bar">
                 <div class="player-nav-left">
-                    <a href="/26-11-12_TIR26/" class="btn-player-back" aria-label="Volver a la Agenda de TIR 2026">
+                    <a href="/26-11-12_TIR26/" class="btn-player-back" aria-label="Back to TIR 2026 Program">
                         <span class="back-arrow" aria-hidden="true">←</span>
-                        <span>Agenda TIR 2026</span>
+                        <span>TIR 2026 Program</span>
                     </a>
                     <span class="player-nav-divider" aria-hidden="true">|</span>
                     <span class="player-nav-title">Trends in Retina</span>
@@ -25,7 +25,7 @@
 
                 <div class="player-nav-center">
                     <!-- Session Selector Dropdown -->
-                    <label for="player-session-select" class="visually-hidden">Seleccionar Sesión de TIR 2026</label>
+                    <label for="player-session-select" class="visually-hidden">Select TIR 2026 Session</label>
                     <select id="player-session-select" class="session-select-dropdown">
                         <option value="SESSION_1">SESSION I · Retina in Action</option>
                         <option value="WORKSHOP">WORKSHOP · Ocular Ultrasound &amp; VR</option>
@@ -40,7 +40,7 @@
                     </select>
 
                     <!-- Horizontal Scrollable Session Pills -->
-                    <nav class="session-nav-pills-scroll" id="player-session-pills" aria-label="Sesiones de TIR 2026">
+                    <nav class="session-nav-pills-scroll" id="player-session-pills" aria-label="TIR 2026 Sessions">
                         <a href="?session=SESSION_1" class="session-pill" id="pill-SESSION_1">Session I</a>
                         <a href="?session=WORKSHOP" class="session-pill" id="pill-WORKSHOP">Workshop</a>
                         <a href="?session=SESSION_2" class="session-pill" id="pill-SESSION_2">Session II</a>
@@ -55,9 +55,9 @@
                 </div>
 
                 <div class="player-nav-right">
-                    <button id="btn-theme-toggle" class="btn-theme-toggle" type="button" aria-label="Alternar modo claro / oscuro">
+                    <button id="btn-theme-toggle" class="btn-theme-toggle" type="button" aria-label="Toggle light / dark mode">
                         <span class="theme-icon" id="theme-icon" aria-hidden="true">☀️</span>
-                        <span class="theme-text" id="theme-text">CLARO</span>
+                        <span class="theme-text" id="theme-text">LIGHT</span>
                     </button>
                 </div>
             </header>
@@ -71,22 +71,22 @@
 
                     <!-- Poster Fallback Layer -->
                     <div id="poster-layer" class="poster-layer">
-                        <img id="poster-img" class="poster-img" alt="Vista previa de la sesión TIR 2026" src="" />
+                        <img id="poster-img" class="poster-img" alt="TIR 2026 session preview" src="" />
                         <div class="poster-overlay-gradient"></div>
                         <div class="poster-content">
                             <div class="poster-status-badge">
                                 <span class="pulse-dot" aria-hidden="true"></span>
-                                <span id="poster-status-text">TIR 2026 · EMISIÓN EN DIRECTO</span>
+                                <span id="poster-status-text">TIR 2026 · LIVE BROADCAST</span>
                             </div>
-                            <button id="btn-poster-play" class="btn-poster-action" type="button" aria-label="Reproducir emisión">
+                            <button id="btn-poster-play" class="btn-poster-action" type="button" aria-label="Play broadcast">
                                 <span class="play-icon" aria-hidden="true">▶</span>
-                                <span class="play-text">REPRODUCIR</span>
+                                <span class="play-text">PLAY</span>
                             </button>
                             <div id="poster-error-notice" class="poster-error-notice hidden" role="alert">
                                 <span class="warning-icon" aria-hidden="true">⚠️</span>
-                                <span id="poster-error-msg">Emisión protegida o aún no iniciada en reproductor externo.</span>
+                                <span id="poster-error-msg">Broadcast protected or not yet started in external player.</span>
                                 <a id="poster-yt-link" href="#" target="_blank" rel="noopener" class="btn-yt-external">
-                                    Ver en YouTube ↗
+                                    Watch on YouTube ↗
                                 </a>
                             </div>
                         </div>
@@ -99,7 +99,7 @@
 
                     <!-- Option C Central Unmute Overlay -->
                     <div id="unmute-overlay" class="unmute-overlay faded">
-                        <button id="btn-unmute-overlay" class="btn-unmute-overlay" type="button" aria-label="Activar sonido">
+                        <button id="btn-unmute-overlay" class="btn-unmute-overlay" type="button" aria-label="Unmute audio">
                             <span class="unmute-icon" aria-hidden="true">🔊</span>
                             <span class="unmute-text">TAP FOR SOUND</span>
                         </button>
@@ -110,20 +110,20 @@
                 <div class="custom-player-controls" id="custom-player-controls">
                     <!-- Hairline Timeline Scrubber -->
                     <div class="timeline-container" id="timeline-container">
-                        <label for="input-custom-seek" class="visually-hidden">Control de tiempo del vídeo</label>
+                        <label for="input-custom-seek" class="visually-hidden">Video timeline scrubber</label>
                         <input type="range" id="input-custom-seek" class="ctrl-seek-bar" min="0" max="100" value="0" step="0.1">
                         <div class="seek-fill" id="seek-fill"></div>
                     </div>
 
                     <div class="ctrl-row">
                         <div class="ctrl-group left">
-                            <button id="btn-custom-play" class="btn-ctrl" type="button" aria-label="Reproducir o pausar vídeo">
+                            <button id="btn-custom-play" class="btn-ctrl" type="button" aria-label="Play or pause video">
                                 ▶ PLAY
                             </button>
-                            <button id="btn-custom-mute" class="btn-ctrl" type="button" aria-label="Silenciar o activar audio">
+                            <button id="btn-custom-mute" class="btn-ctrl" type="button" aria-label="Mute or unmute audio">
                                 🔊 MUTE
                             </button>
-                            <label for="input-custom-volume" class="visually-hidden">Volumen</label>
+                            <label for="input-custom-volume" class="visually-hidden">Volume</label>
                             <input type="range" id="input-custom-volume" min="0" max="100" value="100" class="ctrl-slider">
                         </div>
 
@@ -133,7 +133,7 @@
                         </div>
 
                         <div class="ctrl-group right">
-                            <button id="btn-custom-fs" class="btn-ctrl" type="button" aria-label="Pantalla Completa">
+                            <button id="btn-custom-fs" class="btn-ctrl" type="button" aria-label="Fullscreen">
                                 ⛶
                             </button>
                         </div>
@@ -154,16 +154,16 @@
                     <!-- Dynamic AI Subtitle Disclaimer -->
                     <span id="ai-disclaimer" class="ai-disclaimer">
                         <span class="warning-icon" aria-hidden="true">⚠️</span>
-                        <span id="ai-disclaimer-text">Los subtítulos generados por IA pueden contener imprecisiones</span>
+                        <span id="ai-disclaimer-text">AI-generated subtitles may contain inaccuracies</span>
                     </span>
                 </div>
 
                 <div class="language-status-group">
                     <div class="language-selector-wrapper">
-                        <label for="select-language">Idioma:</label>
+                        <label for="select-language">Language:</label>
                         <select id="select-language" class="language-dropdown">
-                            <option value="Spanish" selected>🇪🇸 Spanish (Español)</option>
-                            <option value="English">🇬🇧 English</option>
+                            <option value="English" selected>🇬🇧 English</option>
+                            <option value="Spanish">🇪🇸 Spanish (Español)</option>
                         </select>
                     </div>
                     <div class="status-indicator-wrapper">
@@ -178,7 +178,7 @@
                 <div class="subtitle-box" id="subtitle-box" aria-live="polite" aria-atomic="true">
                     <div class="subtitle-text-wrapper">
                         <div class="subtitle-text" id="subtitle-text">
-                            ESPERANDO SUBTÍTULOS EN DIRECTO...
+                            WAITING FOR LIVE SUBTITLES...
                         </div>
                     </div>
                 </div>

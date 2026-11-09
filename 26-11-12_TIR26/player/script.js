@@ -92,7 +92,7 @@
     let realtimeChannel = null;
 
     let isSubtitlesEnabled = true;
-    let selectedLanguage = 'Spanish';
+    let selectedLanguage = 'English';
     let ttsEnabled = false;
 
     // Stream Mode & Timeline Scrubber State
@@ -185,10 +185,10 @@
     function updateThemeUI(theme) {
         if (themeText && themeIcon) {
             if (theme === 'light') {
-                themeText.textContent = 'OSCURO';
+                themeText.textContent = 'DARK';
                 themeIcon.textContent = '🌙';
             } else {
-                themeText.textContent = 'CLARO';
+                themeText.textContent = 'LIGHT';
                 themeIcon.textContent = '☀️';
             }
         }
@@ -369,11 +369,11 @@
             posterErrorNotice.classList.remove('hidden');
             if (posterErrorMsg) {
                 if (event.data === 150 || event.data === 101) {
-                    posterErrorMsg.textContent = 'Este vídeo tiene restringida la reproducción externa por su titular.';
+                    posterErrorMsg.textContent = 'External playback is restricted by the video owner.';
                 } else if (event.data === 100) {
-                    posterErrorMsg.textContent = 'Vídeo no encontrado o retirado.';
+                    posterErrorMsg.textContent = 'Video not found or removed.';
                 } else {
-                    posterErrorMsg.textContent = 'Emisión aún no disponible o protegida.';
+                    posterErrorMsg.textContent = 'Broadcast not yet available or protected.';
                 }
             }
         }
@@ -657,7 +657,7 @@
 
             if (error) {
                 console.warn('[Captions Error]:', error.message);
-                if (waitingTag) waitingTag.textContent = 'Error al cargar subtítulos';
+                if (waitingTag) waitingTag.textContent = 'Error loading subtitles';
                 return;
             }
 
@@ -683,11 +683,11 @@
             } else {
                 console.log(`[Captions] No existing captions found in database for broadcast_id: ${resolvedBroadcastId}`);
                 if (waitingTag) {
-                    waitingTag.textContent = 'Sin subtítulos previos';
+                    waitingTag.textContent = 'No previous subtitles';
                     waitingTag.classList.remove('hidden');
                 }
                 if (subtitleTextEl) {
-                    subtitleTextEl.textContent = 'ESPERANDO SUBTÍTULOS EN DIRECTO...';
+                    subtitleTextEl.textContent = 'WAITING FOR LIVE SUBTITLES...';
                 }
             }
         } catch (err) {
@@ -737,7 +737,7 @@
                 console.log(`[Supabase Realtime Status]: ${status}`);
                 if (status === 'SUBSCRIBED') {
                     if (waitingTag && inMemoryCaptions.length === 0) {
-                        waitingTag.textContent = 'Conectado (esperando directo)';
+                        waitingTag.textContent = 'Connected (waiting for live stream)';
                     }
                 }
             });
@@ -862,7 +862,7 @@
             infoTag.textContent = 'Original';
             infoTag.className = 'info-tag badge-original';
         } else {
-            infoTag.textContent = 'Traducido';
+            infoTag.textContent = 'Translated';
             infoTag.className = 'info-tag badge-translated';
         }
     }
