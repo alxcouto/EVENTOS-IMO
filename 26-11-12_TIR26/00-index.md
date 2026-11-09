@@ -10,6 +10,7 @@ Index of files created and configured for the **TIR 2026 · Trends in Retina (6t
 | :--- | :--- | :--- |
 | [00-index.md](./00-index.md) | Event Documentation | Local file index, configuration guide, and 10-session catalog for TIR 2026. |
 | [Program_ENG_TIR_2026.pdf](./Program_ENG_TIR_2026.pdf) | Official Congress PDF | Visual design guide and complete 3-day scientific program & faculty reference. |
+| [assets/speakers/](./assets/speakers/) | Speaker Portrait Assets | 27 high-resolution faculty portrait photos extracted from the official congress PDF for roll-over bio cards. |
 | [index.html](./index.html) | Tier 2: Event Sub-Landing Page | TIR 2026 visual identity hero, 10-session quick-launch pill strip, 3-day interactive pill-like agenda with individual sub-lecture pills opening the player, Organising Committee & Speakers section, and embed drawer. |
 | [style.css](./style.css) | Event Sub-Landing Stylesheet | TIR 2026 crimson-orange palette (`#E31E24`, `#F37021`), dark slate day headers (`#1B2432`), warm coral session cards (`#FDF3F0`), and interactive lecture pills. |
 | [config.json](./config.json) | Event Configuration | Defines Supabase endpoint/keys and YouTube broadcast IDs for all 10 TIR 2026 sessions. |
