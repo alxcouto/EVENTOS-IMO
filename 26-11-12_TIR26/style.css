@@ -849,8 +849,13 @@
 
 .speaker-trigger {
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: var(--radius-full);
     transition: var(--transition-standard);
+}
+
+.lp-speaker,
+.lp-speaker.speaker-trigger {
+    border-radius: var(--radius-full);
 }
 
 .session-faculty-meta .speaker-trigger,
